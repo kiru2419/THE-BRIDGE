@@ -1,0 +1,11 @@
+# Node modules and build artifacts
+node_modules/
+/dist/
+# OS files
+.DS_Store
+# Logs
+*.log
+# Secrets
+*.env
+# Git files
+git-*.txt

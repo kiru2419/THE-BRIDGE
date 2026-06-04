@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE BRIDGE — 36-Month Build</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--surface:#111;--surface2:#181818;--surface3:#202020;
+  --gold:#c9a84c;--gold2:#e8c97a;--gold-dim:rgba(201,168,76,0.12);
+  --white:#f0ead8;--muted:#555;--muted2:#2a2a2a;
+  --green:#1e7a50;--green-bg:rgba(30,122,80,0.12);--green-bright:#27ae60;
+  --red:#c0392b;--red-bg:rgba(192,57,43,0.1);
+  --blue:#2a6cb0;--blue-bg:rgba(42,108,176,0.1);
+  --orange:#c0621a;--purple:#7b4ea0;
+  --border:rgba(201,168,76,0.1);--border2:rgba(255,255,255,0.06);
+  --font-d:'Bebas Neue',sans-serif;--font-b:'DM Sans',sans-serif;--font-m:'DM Mono',monospace;
+  --r:3px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--white);font-family:var(--font-b);height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(201,168,76,0.2);border-radius:2px;}
+
+/* TOP BAR */
+.topbar{display:flex;align-items:center;padding:0 14px;height:50px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;gap:8px;}
+.logo{font-family:var(--font-d);font-size:19px;letter-spacing:3px;color:var(--gold);flex-shrink:0;margin-right:4px;}
+.nav-tabs{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.ntab{font-family:var(--font-m);font-size:10px;letter-spacing:1px;padding:5px 10px;border-radius:var(--r);border:1px solid transparent;color:var(--muted);background:transparent;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;}
+.ntab.active{color:var(--gold);border-color:rgba(201,168,76,0.3);background:var(--gold-dim);}
+.ntab:hover:not(.active){color:var(--white);}
+.streak-pill{display:flex;align-items:center;gap:5px;background:var(--gold-dim);border:1px solid rgba(201,168,76,0.25);padding:4px 10px;border-radius:20px;cursor:pointer;flex-shrink:0;}
+.streak-pill:hover{border-color:rgba(201,168,76,0.5);}
+.sp-num{font-family:var(--font-d);font-size:15px;color:var(--gold);line-height:1;}
+.sp-label{font-family:var(--font-m);font-size:8px;color:var(--muted);letter-spacing:1px;}
+.panic-btn{font-family:var(--font-m);font-size:9px;letter-spacing:1px;padding:5px 10px;border-radius:var(--r);border:1px solid rgba(192,57,43,0.4);color:var(--red);background:var(--red-bg);cursor:pointer;flex-shrink:0;transition:all .2s;}
+.panic-btn:hover{border-color:var(--red);background:rgba(192,57,43,0.2);}
+
+/* LAYOUT */
+.main-area{display:flex;flex:1;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{width:190px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;}
+.sy-label{padding:8px 12px 4px;font-family:var(--font-m);font-size:8px;letter-spacing:3px;color:var(--muted);border-top:1px solid var(--border2);margin-top:4px;}
+.sy-label:first-child{margin-top:0;border-top:none;}
+.sm{display:flex;align-items:center;gap:7px;padding:8px 12px;cursor:pointer;transition:all .15s;border-left:2px solid transparent;}
+.sm:hover{background:var(--surface2);}
+.sm.active{background:var(--gold-dim);border-left-color:var(--gold);}
+.sm.active .sm-n{color:var(--gold);}
+.sm.active .sm-name{color:var(--white);}
+.sm-n{font-family:var(--font-d);font-size:12px;color:var(--muted);line-height:1;width:18px;flex-shrink:0;}
+.sm-name{font-family:var(--font-m);font-size:9px;color:var(--muted);letter-spacing:1px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sm-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.sm-pct{font-family:var(--font-m);font-size:8px;color:var(--muted);}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:18px;}
+.view{display:none;animation:fadeUp .2s ease;}
+.view.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
+
+/* MONTH HEADER */
+.mh{margin-bottom:16px;}
+.mh-above{display:flex;align-items:center;gap:8px;margin-bottom:2px;}
+.stage-tag{font-family:var(--font-m);font-size:8px;letter-spacing:2px;padding:3px 8px;border-radius:20px;border:1px solid;}
+.mh-mon{font-family:var(--font-m);font-size:8px;color:var(--muted);letter-spacing:2px;}
+.mh-title{font-family:var(--font-d);font-size:38px;letter-spacing:3px;line-height:1;margin-bottom:2px;}
+.mh-focus{font-family:var(--font-m);font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:10px;}
+.mh-mantra{font-family:var(--font-d);font-size:13px;letter-spacing:2px;color:var(--gold);padding:8px 12px;border-left:2px solid var(--gold);background:var(--gold-dim);border-radius:0 var(--r) var(--r) 0;margin-bottom:14px;}
+
+/* STATS */
+.stats-g{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;}
+.sc{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:10px 12px;}
+.sc-label{font-family:var(--font-m);font-size:8px;letter-spacing:2px;color:var(--muted);margin-bottom:3px;}
+.sc-val{font-family:var(--font-d);font-size:20px;color:var(--white);line-height:1;}
+
+/* PROGRESS */
+.prog{margin-bottom:12px;}
+.prog-h{display:flex;justify-content:space-between;margin-bottom:4px;}
+.prog-lbl{font-family:var(--font-m);font-size:8px;letter-spacing:2px;color:var(--muted);}
+.prog-pct{font-family:var(--font-d);font-size:14px;color:var(--gold);}
+.prog-track{height:2px;background:var(--surface3);border-radius:1px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .4s;}
+
+/* REVENUE INPUT */
+.rev-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:10px 12px;}
+.rev-label{font-family:var(--font-m);font-size:8px;letter-spacing:2px;color:var(--muted);flex-shrink:0;}
+.rev-input{flex:1;background:transparent;border:none;border-bottom:1px solid var(--border2);color:var(--gold);font-family:var(--font-d);font-size:18px;letter-spacing:2px;outline:none;padding:2px 4px;width:100px;}
+.rev-input::placeholder{color:var(--muted);font-size:14px;}
+.rev-input:focus{border-bottom-color:var(--gold);}
+.rev-unit{font-family:var(--font-m);font-size:9px;color:var(--muted);flex-shrink:0;}
+
+/* TARGETS */
+.tbox{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:12px;margin-bottom:12px;}
+.tbox-lbl{font-family:var(--font-m);font-size:8px;letter-spacing:2px;color:var(--muted);margin-bottom:7px;}
+.tlist{list-style:none;}
+.tlist li{font-size:11px;color:var(--white);padding:3px 0 3px 14px;position:relative;line-height:1.4;border-bottom:1px solid var(--border2);}
+.tlist li:last-child{border-bottom:none;}
+.tlist li::before{content:'→';position:absolute;left:0;color:var(--gold);font-size:9px;top:4px;}
+
+/* WEEK TABS */
+.wtabs{display:flex;gap:3px;margin-bottom:10px;}
+.wtab{flex:1;padding:7px 4px;text-align:center;font-family:var(--font-m);font-size:9px;letter-spacing:1px;color:var(--muted);background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);cursor:pointer;transition:all .2s;}
+.wtab:hover{color:var(--white);}
+.wtab.active{color:var(--gold);border-color:rgba(201,168,76,0.3);background:var(--gold-dim);}
+.wtab.wdone{color:var(--green);border-color:rgba(30,122,80,0.3);background:var(--green-bg);}
+
+/* WEEK PANEL */
+.wpanel{display:none;}
+.wpanel.active{display:block;animation:fadeUp .2s ease;}
+.wgoal{background:var(--surface);border-left:2px solid var(--gold);padding:9px 12px;margin-bottom:10px;border-radius:0 var(--r) var(--r) 0;}
+.wg-t{font-family:var(--font-d);font-size:13px;letter-spacing:2px;color:var(--gold);margin-bottom:1px;}
+.wg-d{font-size:11px;color:var(--muted);line-height:1.4;}
+
+/* TASKS */
+.tg{margin-bottom:10px;}
+.tg-h{display:flex;align-items:center;gap:5px;margin-bottom:5px;font-family:var(--font-m);font-size:8px;letter-spacing:2px;color:var(--muted);}
+.tg-line{flex:1;height:1px;background:var(--border2);}
+.lpip{width:5px;height:5px;border-radius:50%;}
+.ti{display:flex;align-items:flex-start;gap:8px;padding:7px 8px;border-radius:var(--r);cursor:pointer;transition:background .15s;margin-bottom:2px;}
+.ti:hover{background:var(--surface2);}
+.ti.done{opacity:0.45;}
+.tcb{width:15px;height:15px;border:1.5px solid var(--muted);border-radius:2px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.tcb.chk{background:var(--green);border-color:var(--green);}
+.tcb.chk::after{content:'✓';font-size:9px;color:#fff;font-weight:700;}
+.tt{font-size:11px;color:var(--white);line-height:1.4;flex:1;}
+.tt.done{text-decoration:line-through;color:var(--muted);}
+
+/* WEEKLY REFLECTION */
+.reflect-box{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:12px;margin-top:12px;}
+.reflect-title{font-family:var(--font-d);font-size:13px;letter-spacing:2px;color:var(--gold);margin-bottom:10px;}
+.rq{margin-bottom:10px;}
+.rq-label{font-family:var(--font-m);font-size:8px;letter-spacing:2px;color:var(--muted);margin-bottom:5px;}
+.rq-input{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r);padding:8px 10px;font-family:var(--font-b);font-size:11px;color:var(--white);resize:none;outline:none;min-height:52px;transition:border-color .2s;}
+.rq-input:focus{border-color:rgba(201,168,76,0.3);}
+.rq-input::placeholder{color:var(--muted);}
+
+/* WIN LOG */
+.win-row{display:flex;gap:6px;margin-bottom:8px;}
+.win-input{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r);padding:7px 10px;font-family:var(--font-b);font-size:11px;color:var(--white);outline:none;transition:border-color .2s;}
+.win-input:focus{border-color:rgba(201,168,76,0.3);}
+.win-input::placeholder{color:var(--muted);}
+.win-add{padding:7px 12px;background:var(--gold-dim);border:1px solid rgba(201,168,76,0.3);border-radius:var(--r);color:var(--gold);font-family:var(--font-d);font-size:12px;letter-spacing:1px;cursor:pointer;flex-shrink:0;transition:all .2s;}
+.win-add:hover{background:rgba(201,168,76,0.2);}
+.win-item{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--border2);}
+.win-item:last-child{border-bottom:none;}
+.win-star{color:var(--gold);font-size:11px;flex-shrink:0;margin-top:1px;}
+.win-text{font-size:11px;color:var(--white);flex:1;line-height:1.4;}
+.win-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:0 2px;flex-shrink:0;}
+.win-del:hover{color:var(--red);}
+
+/* MONTHLY SCORECARD */
+.scorecard{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:14px;margin-bottom:14px;}
+.sc-title{font-family:var(--font-d);font-size:14px;letter-spacing:2px;color:var(--gold);margin-bottom:12px;}
+.sc-lever{margin-bottom:12px;}
+.sc-lname{font-family:var(--font-m);font-size:9px;letter-spacing:2px;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.sc-slider{width:100%;accent-color:var(--gold);margin-bottom:3px;}
+.sc-slider-row{display:flex;align-items:center;gap:8px;}
+.sc-val-disp{font-family:var(--font-d);font-size:18px;color:var(--gold);width:24px;text-align:right;flex-shrink:0;}
+.sc-labels{display:flex;justify-content:space-between;font-family:var(--font-m);font-size:8px;color:var(--muted);}
+
+/* CHECK-IN */
+.ci-wrap{max-width:480px;margin:0 auto;}
+.ci-date{font-family:var(--font-m);font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:14px;}
+.ci-title{font-family:var(--font-d);font-size:28px;letter-spacing:3px;margin-bottom:3px;}
+.ci-sub{font-size:11px;color:var(--muted);margin-bottom:16px;line-height:1.5;}
+.ci-rule{background:var(--gold-dim);border:1px solid rgba(201,168,76,0.2);border-radius:var(--r);padding:10px 12px;margin-bottom:16px;font-family:var(--font-d);font-size:12px;letter-spacing:1px;color:var(--gold);text-align:center;line-height:1.5;}
+.lc{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:all .2s;margin-bottom:6px;}
+.lc:hover{background:var(--surface2);}
+.lc.pulled{border-color:rgba(201,168,76,0.35);background:var(--gold-dim);}
+.lc.pulled .lc-name{color:var(--gold);}
+.lc.pulled .lc-cb{background:var(--gold);border-color:var(--gold);}
+.lc.pulled .lc-cb::after{content:'✓';font-size:11px;color:var(--bg);font-weight:700;}
+.lc-icon{width:34px;height:34px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.lc-body{flex:1;}
+.lc-name{font-family:var(--font-d);font-size:14px;letter-spacing:2px;color:var(--white);margin-bottom:1px;transition:color .2s;}
+.lc-desc{font-size:10px;color:var(--muted);line-height:1.4;}
+.lc-cb{width:18px;height:18px;border:1.5px solid var(--muted);border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.sub-btn{width:100%;padding:12px;background:var(--gold);color:var(--bg);font-family:var(--font-d);font-size:16px;letter-spacing:3px;border:none;border-radius:var(--r);cursor:pointer;transition:opacity .2s;margin-top:8px;}
+.sub-btn:hover{opacity:.85;}
+.sub-btn:disabled{opacity:.3;cursor:not-allowed;}
+.sub-btn.done-state{background:var(--green);}
+
+/* STREAK */
+.sv{max-width:480px;margin:0 auto;}
+.sh{text-align:center;margin-bottom:20px;padding:20px;background:var(--surface);border-radius:var(--r);border:1px solid var(--border);}
+.sh-big{font-family:var(--font-d);font-size:72px;color:var(--gold);letter-spacing:4px;line-height:1;}
+.sh-tag{font-family:var(--font-m);font-size:9px;color:var(--muted);letter-spacing:3px;margin-top:2px;}
+.sh-best{font-family:var(--font-m);font-size:10px;color:var(--muted);margin-top:6px;}
+.sh-best span{color:var(--gold2);}
+.cal-wrap{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:12px;margin-bottom:12px;}
+.cal-title{font-family:var(--font-m);font-size:8px;letter-spacing:2px;color:var(--muted);margin-bottom:8px;}
+.cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-lbl{font-family:var(--font-m);font-size:7px;color:var(--muted);text-align:center;padding-bottom:3px;}
+.cal-d{aspect-ratio:1;border-radius:2px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-family:var(--font-m);font-size:8px;color:var(--muted);}
+.cal-d.has{background:var(--green-bg);color:var(--green);}
+.cal-d.full{background:var(--green);color:#fff;}
+.cal-d.today{outline:1px solid rgba(201,168,76,0.5);}
+.ls-g{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
+.ls-c{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:10px;}
+.ls-h{display:flex;align-items:center;gap:7px;margin-bottom:5px;}
+.ls-icon{width:26px;height:26px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:13px;}
+.ls-name{font-family:var(--font-d);font-size:12px;letter-spacing:1px;}
+.ls-bar{height:2px;background:var(--surface3);border-radius:1px;overflow:hidden;}
+.ls-fill{height:100%;border-radius:1px;}
+.ls-pct{font-family:var(--font-m);font-size:8px;color:var(--muted);margin-top:3px;}
+
+/* REVENUE VIEW */
+.rv-wrap{max-width:540px;}
+.rv-title{font-family:var(--font-d);font-size:28px;letter-spacing:3px;margin-bottom:4px;}
+.rv-sub{font-family:var(--font-m);font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:16px;}
+.rv-total{background:var(--gold-dim);border:1px solid rgba(201,168,76,0.25);border-radius:var(--r);padding:14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.rv-total-label{font-family:var(--font-m);font-size:8px;color:var(--muted);letter-spacing:2px;}
+.rv-total-val{font-family:var(--font-d);font-size:28px;color:var(--gold);letter-spacing:2px;}
+.rv-month{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:10px;}
+.rv-m-num{font-family:var(--font-d);font-size:14px;color:var(--muted);width:28px;flex-shrink:0;}
+.rv-m-name{font-family:var(--font-m);font-size:9px;color:var(--white);flex:1;letter-spacing:1px;}
+.rv-m-target{font-family:var(--font-m);font-size:8px;color:var(--muted);flex-shrink:0;width:70px;text-align:right;}
+.rv-m-actual{font-family:var(--font-d);font-size:16px;color:var(--gold);width:90px;text-align:right;flex-shrink:0;}
+.rv-m-input{width:90px;background:transparent;border:none;border-bottom:1px solid var(--border2);color:var(--gold);font-family:var(--font-d);font-size:14px;letter-spacing:1px;outline:none;padding:2px 4px;text-align:right;flex-shrink:0;}
+.rv-m-input:focus{border-bottom-color:var(--gold);}
+.rv-m-input::placeholder{color:var(--muted2);font-size:12px;}
+.rv-bar{height:3px;background:var(--surface2);border-radius:1px;overflow:hidden;margin-top:4px;}
+.rv-bar-fill{height:100%;border-radius:1px;transition:width .4s;}
+.rv-m-inner{flex:1;}
+
+/* WIN LOG VIEW */
+.wl-wrap{max-width:540px;}
+.wl-title{font-family:var(--font-d);font-size:28px;letter-spacing:3px;margin-bottom:4px;}
+.wl-sub{font-family:var(--font-m);font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:16px;}
+.wl-add-row{display:flex;gap:8px;margin-bottom:16px;}
+.wl-in{flex:1;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:9px 12px;font-family:var(--font-b);font-size:12px;color:var(--white);outline:none;transition:border-color .2s;}
+.wl-in:focus{border-color:rgba(201,168,76,0.4);}
+.wl-in::placeholder{color:var(--muted);}
+.wl-btn{padding:9px 16px;background:var(--gold);border:none;border-radius:var(--r);color:var(--bg);font-family:var(--font-d);font-size:14px;letter-spacing:2px;cursor:pointer;transition:opacity .2s;flex-shrink:0;}
+.wl-btn:hover{opacity:.85;}
+.win-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:12px 14px;margin-bottom:6px;display:flex;align-items:flex-start;gap:10px;animation:fadeUp .2s ease;}
+.wc-star{font-size:14px;flex-shrink:0;margin-top:1px;}
+.wc-body{flex:1;}
+.wc-text{font-size:12px;color:var(--white);line-height:1.5;margin-bottom:3px;}
+.wc-meta{font-family:var(--font-m);font-size:8px;color:var(--muted);letter-spacing:1px;}
+.wc-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:0;flex-shrink:0;}
+.wc-del:hover{color:var(--red);}
+.wl-filter{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap;}
+.wf-btn{font-family:var(--font-m);font-size:8px;letter-spacing:1px;padding:4px 10px;border-radius:20px;border:1px solid var(--border2);color:var(--muted);background:transparent;cursor:pointer;transition:all .2s;}
+.wf-btn.active{color:var(--gold);border-color:rgba(201,168,76,0.4);background:var(--gold-dim);}
+
+/* OVERVIEW */
+.ov-g{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px;}
+.ov-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:12px;cursor:pointer;transition:all .2s;}
+.ov-card:hover{border-color:rgba(201,168,76,0.25);background:var(--surface2);}
+.ov-st{font-family:var(--font-m);font-size:7px;letter-spacing:2px;margin-bottom:4px;}
+.ov-num{font-family:var(--font-d);font-size:22px;color:var(--muted);line-height:1;}
+.ov-name{font-family:var(--font-d);font-size:14px;letter-spacing:1px;color:var(--white);margin-bottom:4px;}
+.ov-rev{font-family:var(--font-m);font-size:8px;color:var(--muted);margin-bottom:5px;}
+.ov-pb{height:2px;background:var(--surface3);border-radius:1px;overflow:hidden;margin-bottom:3px;}
+.ov-pf{height:100%;}
+.ov-pm{font-family:var(--font-m);font-size:8px;color:var(--muted);}
+
+/* PANIC / ANCHOR OVERLAY */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:999;display:none;align-items:center;justify-content:center;padding:20px;}
+.overlay.show{display:flex;}
+.overlay-box{width:100%;max-width:480px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:28px;position:relative;max-height:90vh;overflow-y:auto;}
+.ov-close{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;}
+.ov-close:hover{color:var(--white);}
+.panic-title{font-family:var(--font-d);font-size:32px;letter-spacing:3px;color:var(--red);margin-bottom:4px;}
+.panic-sub{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.5;}
+.panic-step{display:flex;gap:12px;margin-bottom:12px;padding:12px;background:var(--surface2);border-radius:var(--r);border-left:2px solid var(--red);}
+.ps-num{font-family:var(--font-d);font-size:22px;color:var(--red);flex-shrink:0;line-height:1;}
+.ps-body{}
+.ps-title{font-family:var(--font-d);font-size:14px;letter-spacing:2px;color:var(--white);margin-bottom:2px;}
+.ps-desc{font-size:11px;color:var(--muted);line-height:1.5;}
+.panic-rule{background:var(--red-bg);border:1px solid rgba(192,57,43,0.3);border-radius:var(--r);padding:12px;margin-top:12px;font-family:var(--font-d);font-size:13px;letter-spacing:2px;color:var(--red);text-align:center;line-height:1.5;}
+
+.anchor-title{font-family:var(--font-d);font-size:28px;letter-spacing:3px;color:var(--gold);margin-bottom:4px;}
+.anchor-sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
+.anchor-q{background:var(--gold-dim);border:1px solid rgba(201,168,76,0.2);border-radius:var(--r);padding:14px;margin-bottom:8px;}
+.aq-label{font-family:var(--font-m);font-size:8px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;}
+.aq-text{font-family:var(--font-d);font-size:15px;letter-spacing:1px;color:var(--gold);line-height:1.4;}
+.anchor-line{font-family:var(--font-d);font-size:18px;letter-spacing:2px;color:var(--white);text-align:center;margin:16px 0;line-height:1.4;padding:14px;border:1px solid var(--border);border-radius:var(--r);}
+.anchor-btn{width:100%;padding:12px;background:var(--gold);border:none;border-radius:var(--r);color:var(--bg);font-family:var(--font-d);font-size:16px;letter-spacing:3px;cursor:pointer;margin-top:12px;}
+.anchor-btn:hover{opacity:.85;}
+
+/* MISC */
+.section-divider{height:1px;background:var(--border2);margin:14px 0;}
+.empty{text-align:center;padding:32px;font-family:var(--font-m);font-size:10px;color:var(--muted);letter-spacing:1px;}
+
+/* ── MOBILE BOTTOM NAV ─────────────────────────────────────────────── */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--surface);border-top:1px solid var(--border);z-index:200;flex-shrink:0;}
+.mob-nav-inner{display:flex;align-items:stretch;height:100%;}
+.mn-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;color:var(--muted);cursor:pointer;padding:4px 2px;transition:color .2s;-webkit-tap-highlight-color:transparent;}
+.mn-btn.active{color:var(--gold);}
+.mn-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.mn-lbl{font-family:var(--font-m);font-size:7px;letter-spacing:1px;}
+
+/* SIDEBAR OVERLAY (mobile) */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:150;backdrop-filter:blur(2px);}
+.sidebar-overlay.show{display:block;}
+.mob-sidebar-header{display:none;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.mob-sidebar-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px;}
+
+/* ── RESPONSIVE BREAKPOINTS ────────────────────────────────────────── */
+
+/* TABLET (≤900px) */
+@media(max-width:900px){
+  .sidebar{width:160px;}
+  .sm-name{font-size:8px;}
+  .content{padding:14px;}
+  .mh-title{font-size:30px;}
+  .stats-g{grid-template-columns:repeat(3,1fr);}
+  .ov-g{grid-template-columns:repeat(2,1fr);}
+  .rv-m-target{display:none;}
+  .rv-wrap,.wl-wrap,.ci-wrap,.sv{max-width:100%;}
+}
+
+/* MOBILE (≤640px) */
+@media(max-width:640px){
+  /* Body: make room for bottom nav */
+  body{height:100dvh;}
+
+  /* Top bar */
+  .topbar{padding:0 10px;height:46px;gap:6px;}
+  .logo{font-size:16px;letter-spacing:2px;}
+  .nav-tabs{display:none;}
+  .panic-btn{font-size:8px;padding:4px 8px;letter-spacing:0;}
+  .streak-pill{padding:4px 8px;}
+  .sp-num{font-size:13px;}
+
+  /* Hide desktop sidebar, show mobile overlay sidebar */
+  .sidebar{
+    position:fixed;top:46px;left:-200px;bottom:56px;
+    width:200px;z-index:160;transition:left .25s ease;
+    border-right:1px solid var(--border);
+  }
+  .sidebar.mob-open{left:0;}
+  .sidebar-overlay.show{display:block;}
+  .mob-sidebar-header{display:flex;}
+  .sy-label:first-child{margin-top:0;}
+
+  /* Content fills full width */
+  .main-area{flex-direction:column;}
+  .content{padding:12px 12px 68px;}
+
+  /* Bottom nav visible */
+  .mob-nav{display:flex;}
+
+  /* Month header */
+  .mh-title{font-size:28px;letter-spacing:2px;}
+  .mh-mantra{font-size:11px;letter-spacing:1px;}
+
+  /* Stats: 2 cols on mobile */
+  .stats-g{grid-template-columns:repeat(2,1fr);}
+  .sc:last-child{grid-column:span 2;}
+
+  /* Revenue row stacked */
+  .rev-row{flex-wrap:wrap;gap:6px;}
+  .rev-label{width:100%;}
+  .rev-input{font-size:16px;}
+
+  /* Week tabs: compact */
+  .wtabs{gap:2px;}
+  .wtab{padding:6px 2px;font-size:8px;}
+
+  /* Tasks */
+  .ti{padding:8px 6px;}
+  .tt{font-size:12px;}
+
+  /* Check-in */
+  .ci-wrap{padding:0;}
+  .ci-title{font-size:22px;letter-spacing:2px;}
+  .ci-rule{font-size:10px;letter-spacing:0;}
+  .lc{padding:10px 12px;gap:10px;}
+  .lc-name{font-size:13px;letter-spacing:1px;}
+  .lc-icon{width:30px;height:30px;font-size:14px;}
+
+  /* Streak */
+  .sh-big{font-size:56px;}
+  .ls-g{grid-template-columns:repeat(2,1fr);}
+
+  /* Revenue journal */
+  .rv-title,.wl-title{font-size:22px;letter-spacing:2px;}
+  .rv-m-target{display:none;}
+  .rv-m-name{font-size:8px;}
+  .rv-total-val{font-size:20px;}
+  .rv-m-input{width:72px;font-size:12px;}
+
+  /* Win log */
+  .wl-add-row{flex-direction:column;gap:6px;}
+  .wl-btn{width:100%;}
+
+  /* Overview: 1 col on small mobile, 2 on bigger */
+  .ov-g{grid-template-columns:repeat(2,1fr);gap:6px;}
+  .ov-name{font-size:12px;}
+
+  /* Overlays */
+  .overlay-box{padding:20px 16px;margin:8px;}
+  .panic-title{font-size:24px;}
+  .anchor-title{font-size:22px;}
+  .anchor-line{font-size:14px;letter-spacing:1px;}
+  .panic-step{padding:10px;}
+  .ps-num{font-size:18px;}
+  .ps-title{font-size:12px;}
+  .ps-desc{font-size:10px;}
+
+  /* Reflect box */
+  .reflect-box{padding:10px;}
+  .reflect-title{font-size:12px;}
+
+  /* Scorecard sliders */
+  .scorecard{padding:12px;}
+}
+
+/* VERY SMALL (≤360px) */
+@media(max-width:360px){
+  .mh-title{font-size:24px;}
+  .stats-g{grid-template-columns:repeat(2,1fr);}
+  .sc:last-child{grid-column:span 2;}
+  .ov-g{grid-template-columns:1fr;}
+  .lc-desc{display:none;}
+  .cal-d{font-size:7px;}
+}
+
+/* LARGE DESKTOP (≥1200px) */
+@media(min-width:1200px){
+  .sidebar{width:210px;}
+  .content{padding:24px 28px;}
+  .mh-title{font-size:46px;}
+  .stats-g{gap:10px;}
+  .ov-g{grid-template-columns:repeat(3,1fr);}
+  .ci-wrap,.sv{max-width:520px;}
+  .rv-wrap,.wl-wrap{max-width:620px;}
+  .ti{padding:9px 10px;}
+  .tt{font-size:12px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">THE BRIDGE</div>
+  <div class="nav-tabs">
+    <button class="ntab active" onclick="switchView('plan')">PLAN</button>
+    <button class="ntab" onclick="switchView('checkin')">CHECK-IN</button>
+    <button class="ntab" onclick="switchView('streak')">STREAK</button>
+    <button class="ntab" onclick="switchView('revenue')">REVENUE</button>
+    <button class="ntab" onclick="switchView('wins')">WINS</button>
+    <button class="ntab" onclick="switchView('overview')">OVERVIEW</button>
+  </div>
+  <div class="streak-pill" onclick="switchView('streak')">
+    <div>🔥</div>
+    <div><div class="sp-num" id="streakNum">0</div><div class="sp-label">STREAK</div></div>
+  </div>
+  <button class="panic-btn" onclick="showOverlay('panic')">⚡ LOST?</button>
+</div>
+
+<!-- SIDEBAR OVERLAY (mobile tap-outside to close) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- MAIN -->
+<div class="main-area">
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="mob-sidebar-header">
+      <span style="font-family:var(--font-d);font-size:14px;letter-spacing:2px;color:var(--gold);">MONTHS</span>
+      <button class="mob-sidebar-close" onclick="closeSidebar()">✕</button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content" id="contentArea">
+
+    <!-- PLAN -->
+    <div class="view active" id="view-plan">
+      <div id="monthContent"></div>
+    </div>
+
+    <!-- CHECK-IN -->
+    <div class="view" id="view-checkin">
+      <div class="ci-wrap">
+        <div class="ci-date" id="ciDate"></div>
+        <div class="ci-title">DAILY CHECK-IN</div>
+        <div class="ci-sub">Which levers did you pull today?<br>No day ends without at least ONE.</div>
+        <div class="ci-rule">"BUSY DAYS DON'T COUNT. EFFORT DOESN'T COUNT.<br>ONLY LEVERS COUNT."</div>
+        <div id="leverCards"></div>
+        <button class="sub-btn" id="subBtn" onclick="submitCheckin()">LOCK IN TODAY</button>
+      </div>
+    </div>
+
+    <!-- STREAK -->
+    <div class="view" id="view-streak">
+      <div class="sv">
+        <div class="sh">
+          <div class="sh-big" id="bigStreak">0</div>
+          <div class="sh-tag">DAY STREAK</div>
+          <div class="sh-best">Best streak: <span id="bestStreak">0</span> days</div>
+        </div>
+        <div class="cal-wrap">
+          <div class="cal-title">LAST 35 DAYS</div>
+          <div class="cal-g" id="calGrid"></div>
+        </div>
+        <div class="ls-g" id="leverStats"></div>
+      </div>
+    </div>
+
+    <!-- REVENUE -->
+    <div class="view" id="view-revenue">
+      <div class="rv-wrap">
+        <div class="rv-title">REVENUE JOURNAL</div>
+        <div class="rv-sub">LOG ACTUAL INCOME · TRACK VS TARGET</div>
+        <div class="rv-total">
+          <div><div class="rv-total-label">TOTAL LOGGED</div><div class="rv-total-val" id="rvTotal">ETB 0</div></div>
+          <div style="text-align:right"><div class="rv-total-label">MONTHS LOGGED</div><div class="rv-total-val" id="rvCount" style="font-size:20px">0 / 36</div></div>
+        </div>
+        <div id="rvList"></div>
+      </div>
+    </div>
+
+    <!-- WINS -->
+    <div class="view" id="view-wins">
+      <div class="wl-wrap">
+        <div class="wl-title">WIN LOG</div>
+        <div class="wl-sub">CAPTURE EVERY WIN BEFORE YOU FORGET IT</div>
+        <div class="wl-add-row">
+          <input class="wl-in" id="winInput" type="text" placeholder="Write your win here — big or small..." onkeydown="if(event.key==='Enter')addWin()">
+          <button class="wl-btn" onclick="addWin()">LOG IT</button>
+        </div>
+        <div class="wl-filter" id="winFilter"></div>
+        <div id="winList"></div>
+      </div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="view" id="view-overview">
+      <div style="margin-bottom:14px;">
+        <div style="font-family:var(--font-d);font-size:28px;letter-spacing:3px;margin-bottom:2px;">3-YEAR OVERVIEW</div>
+        <div style="font-family:var(--font-m);font-size:9px;color:var(--muted);letter-spacing:2px;">STAGE 2 → 5 · ALL 36 MONTHS</div>
+      </div>
+      <div class="ov-g" id="overviewGrid"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PANIC OVERLAY -->
+<div class="overlay" id="overlay-panic">
+  <div class="overlay-box">
+    <button class="ov-close" onclick="hideOverlay('panic')">✕</button>
+    <div class="panic-title">STOP.</div>
+    <div class="panic-sub">You missed a day (or more). That's okay. Here's exactly what to do right now.</div>
+    <div class="panic-step"><div class="ps-num">1</div><div class="ps-body"><div class="ps-title">STOP THE SPIRAL</div><div class="ps-desc">Close every tab. Put your phone down for 60 seconds. Take 3 slow breaths. You are not behind — you are human.</div></div></div>
+    <div class="panic-step"><div class="ps-num">2</div><div class="ps-body"><div class="ps-title">DO ONE TINY THING</div><div class="ps-desc">Send 1 outreach message. Write 1 caption. Record 1 Loom. It takes 5 minutes. That 1 thing breaks the spiral and proves you're still in the game.</div></div></div>
+    <div class="panic-step"><div class="ps-num">3</div><div class="ps-body"><div class="ps-title">LOG TODAY'S CHECK-IN</div><div class="ps-desc">Even if it's just 1 lever — mark it. A 1-lever day beats a 0-lever day every single time. Streaks can restart. Momentum is a choice.</div></div></div>
+    <div class="panic-step"><div class="ps-num">4</div><div class="ps-body"><div class="ps-title">TOMORROW — NORMAL</div><div class="ps-desc">Don't try to make up for lost days. Don't redesign your plan. Just show up tomorrow and pull your levers like nothing happened.</div></div></div>
+    <div class="panic-rule">"MISSING ONE DAY DOES NOT ERASE YOUR DIRECTION.<br>IT ONLY MEANS YOU CONTINUE."</div>
+    <button class="anchor-btn" style="margin-top:14px;" onclick="hideOverlay('panic');switchView('checkin')">PULL A LEVER RIGHT NOW →</button>
+  </div>
+</div>
+
+<!-- ANCHOR OVERLAY -->
+<div class="overlay" id="overlay-anchor">
+  <div class="overlay-box">
+    <button class="ov-close" onclick="hideOverlay('anchor')">✕</button>
+    <div class="anchor-title">YOUR ANCHOR</div>
+    <div class="anchor-sub">Read this when you feel lost, unmotivated, or confused about why you're doing this.</div>
+    <div class="anchor-q"><div class="aq-label">WHY THIS EXISTS</div><div class="aq-text">This career is not your dream. It is the shortest bridge to owning one.</div></div>
+    <div class="anchor-q"><div class="aq-label">WHAT STAGE 2 REALLY IS</div><div class="aq-text">Heavy. Boring. Identity-confusing. Strategic reality: it is the foundation of everything.</div></div>
+    <div class="anchor-q"><div class="aq-label">WHEN ALIGNMENT COMES</div><div class="aq-text">Alignment is not felt in Stage 2. Alignment is earned after Stage 3. You are not supposed to feel aligned yet.</div></div>
+    <div class="anchor-q"><div class="aq-label">WHAT YOU ARE REALLY DOING</div><div class="aq-text">You are not chasing alignment. You are building capacity. Capacity creates alignment.</div></div>
+    <div class="anchor-line">I AM NOT A VIDEO EDITOR.<br>I AM A BUSINESS OWNER<br>BUILDING TOWARD FREEDOM.</div>
+    <div class="anchor-q"><div class="aq-label">THE IDENTITY CONFLICT</div><div class="aq-text">You want to be an entrepreneur. You are one. The agency is not your identity — it is your engine. Use it.</div></div>
+    <div class="anchor-q"><div class="aq-label">THE CONTENT CONFLICT</div><div class="aq-text">Track 1 gets clients. Track 2 builds your legacy audience. They are not in conflict. Track 1 funds Track 2.</div></div>
+    <button class="anchor-btn" onclick="hideOverlay('anchor')">I REMEMBER. BACK TO WORK.</button>
+  </div>
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="mob-nav">
+  <div class="mob-nav-inner">
+    <button class="mn-btn active" id="mn-plan" onclick="switchView('plan')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span class="mn-lbl">PLAN</span>
+    </button>
+    <button class="mn-btn" id="mn-checkin" onclick="switchView('checkin')">
+      <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+      <span class="mn-lbl">CHECK-IN</span>
+    </button>
+    <button class="mn-btn" id="mn-months" onclick="toggleSidebar()">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <span class="mn-lbl">MONTHS</span>
+    </button>
+    <button class="mn-btn" id="mn-streak" onclick="switchView('streak')">
+      <svg viewBox="0 0 24 24"><path d="M12 2c0 6-6 8-6 14a6 6 0 0012 0c0-6-6-8-6-14z"/></svg>
+      <span class="mn-lbl">STREAK</span>
+    </button>
+    <button class="mn-btn" id="mn-more" onclick="toggleMoreMenu()">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+      <span class="mn-lbl">MORE</span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE MORE MENU -->
+<div id="moreMenu" style="display:none;position:fixed;bottom:60px;right:0;left:0;background:var(--surface);border-top:1px solid var(--border);z-index:199;padding:8px;">
+  <div style="display:flex;gap:6px;flex-wrap:wrap;padding:4px 8px;">
+    <button class="ntab" onclick="switchView('revenue');toggleMoreMenu()" style="flex:1;min-width:80px;text-align:center;">REVENUE</button>
+    <button class="ntab" onclick="switchView('wins');toggleMoreMenu()" style="flex:1;min-width:80px;text-align:center;">WINS</button>
+    <button class="ntab" onclick="switchView('overview');toggleMoreMenu()" style="flex:1;min-width:80px;text-align:center;">OVERVIEW</button>
+    <button class="ntab" onclick="showOverlay('panic');toggleMoreMenu()" style="flex:1;min-width:80px;text-align:center;color:var(--red);">⚡ LOST?</button>
+  </div>
+</div>
+
+<script>
+// ─── LEVERS ──────────────────────────────────────────────────────────────────
+const LEVERS=[
+  {id:'cash', name:'CASH',      icon:'💰',color:'#c9a84c',bg:'rgba(201,168,76,0.15)',  desc:'Client delivery · Outreach · Closing deals'},
+  {id:'auth', name:'AUTHORITY', icon:'📢',color:'#c0621a',bg:'rgba(192,98,26,0.15)',   desc:'Content · Case studies · Thought leadership'},
+  {id:'sys',  name:'SYSTEMS',   icon:'⚙️',color:'#2a6cb0',bg:'rgba(42,108,176,0.15)',  desc:'SOPs · Templates · Process improvement'},
+  {id:'team', name:'TEAM',      icon:'👥',color:'#7b4ea0',bg:'rgba(123,78,160,0.15)',  desc:'Hiring · Delegation · Feedback loops'},
+  {id:'self', name:'SELF',      icon:'📚',color:'#1e7a50',bg:'rgba(30,122,80,0.15)',   desc:'Knowledge · Reading · Self-improvement'},
+];
+
+const SC={2:{c:'#c9a84c',bg:'rgba(201,168,76,0.1)'},3:{c:'#2a6cb0',bg:'rgba(42,108,176,0.1)'},4:{c:'#7b4ea0',bg:'rgba(123,78,160,0.1)'},5:{c:'#1e7a50',bg:'rgba(30,122,80,0.1)'}};
+
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+function genMonths(){
+  const M=[];
+
+  // Helper for locked weeks
+  function lw(){return[
+    {t:'WK1',g:'Detailed tasks unlock as you progress. Keep executing your lever framework.',tasks:[{l:'cash',t:'Outreach, delivery, and closing — your core cash tasks'},{l:'auth',t:'Post content consistently — at least 2x this week'},{l:'sys',t:'Update and improve one SOP this week'},{l:'self',t:'30 min of learning — apply it the same week'}]},
+    {t:'WK2',g:'Pull at least one lever every single day — no exceptions.',tasks:[{l:'cash',t:'Follow up every warm lead — nothing falls through the cracks'},{l:'auth',t:'Engage with your audience — reply to comments, DMs'},{l:'sys',t:'Identify one task to systematise or delegate'},{l:'team',t:'Team quality review — specific written feedback'}]},
+    {t:'WK3',g:'Revenue is your proof of concept. Focus on the number.',tasks:[{l:'cash',t:'Outreach push — 15–20 messages minimum this week'},{l:'auth',t:'Publish a case study or result post'},{l:'sys',t:'Record a Loom of a process for future team use'},{l:'self',t:'Apply this month\'s knowledge area to a real problem'}]},
+    {t:'WK4',g:'Month end review — measure everything, adjust nothing else.',tasks:[{l:'self',t:'Calculate this month\'s revenue — write the number'},{l:'self',t:'3 wins this month + 3 things to fix next month'},{l:'self',t:'Compare to target — what\'s the gap?'},{l:'self',t:'Rest. Then start next month strong.'}]},
+  ];}
+
+  function lt(rev){return[`Hit revenue target: ${rev}`,'Pull all 4 levers daily','Keep content cadence consistent','Team delivery improving month-over-month','Apply this stage\'s learning area'];}
+
+  // ── STAGE 2: M1–12 ──────────────────────────────────────────────────────────
+  const s2=[
+    {n:'LAUNCH',    f:'CASH + AUTHORITY',rev:'ETB 120K', m:'I AM NOT BEHIND. I AM BUILDING.',
+     t:['Post first content — before/after reel','Daily outreach 15 msgs/day','Run 2–3 discovery calls','Send first retainer proposal','Learn: sales & closing','Hit ETB 120K revenue'],
+     w:[{t:'WK1 — ACTIVATE',g:'Break the standstill. Post content #1. Restart outreach. Lock in morning ignition.',tasks:[{l:'cash',t:'Morning ignition: spiritual study → write ONE must-do → no phone until done'},{l:'cash',t:'Send 15 outreach messages to luxury wedding studios worldwide'},{l:'auth',t:'3PM block: create before/after reel from your best wedding edit'},{l:'auth',t:'Post reel — English caption explaining what problem it solves'},{l:'cash',t:'Follow up on replies — book discovery calls'},{l:'sys',t:'Record a Loom of your editing workflow (rough is fine, 5–10 min)'},{l:'self',t:'30 min: sales & closing — start your Month 1 resource'}]},
+      {t:'WK2 — CONVERT',g:'Run first discovery calls. Send proposals. Write SOP #1.',tasks:[{l:'cash',t:'Outreach 15 msgs/day every weekday'},{l:'cash',t:'Run any discovery calls booked from Week 1'},{l:'auth',t:'Post content #2 — process clip or insight post'},{l:'cash',t:'Send retainer proposal to any warm prospect'},{l:'sys',t:'Write SOP #1: how I receive and organise footage from a client'},{l:'sys',t:'Write SOP #2: my editing quality checklist before delivery'},{l:'self',t:'30 min: objection handling techniques'}]},
+      {t:'WK3 — CLOSE',g:'Push for first retainer close. Improve outreach from real data.',tasks:[{l:'cash',t:'Rewrite outreach message using what got the most replies'},{l:'cash',t:'15 msgs/day improved + follow all open proposals'},{l:'cash',t:'Send retainer proposal to strongest lead — 48hr window'},{l:'sys',t:'Write SOP #3: client onboarding — what I send after yes'},{l:'auth',t:'Post content #3 — why this agency is your bridge to freedom'},{l:'sys',t:'Record Loom: your full retainer delivery process'},{l:'self',t:'30 min: pricing & framing value'}]},
+      {t:'WK4 — REVIEW',g:'Full Month 1 review. Plan Month 2 with real numbers, not guesses.',tasks:[{l:'auth',t:'Post content #4, #5, #6 — end the month strong'},{l:'cash',t:'Follow up all open proposals — close or kill each one'},{l:'self',t:'Calculate Month 1 revenue — write the number'},{l:'self',t:'Write 3 things that worked + 3 to fix in Month 2'},{l:'sys',t:'Write SOP #4: how I handle revision requests'},{l:'cash',t:'Set Month 2 revenue target based on real data'},{l:'self',t:'Full rest — Month 2 starts Monday'}]}]},
+    {n:'MOMENTUM',  f:'CASH + AUTHORITY',rev:'ETB 180K', m:'CAPACITY CREATES ALIGNMENT.',
+     t:['8 content pieces — quality improving weekly','3+ retainer conversations active','Hit ETB 180K','Close first retainer if not done in M1','Learn: content strategy & positioning','Run 5+ discovery calls'],
+     w:[{t:'WK1 — DOUBLE DOWN',g:'Whatever worked in Month 1 — do more. Kill what didn\'t.',tasks:[{l:'cash',t:'Morning ignition ritual — every single day, no exceptions'},{l:'cash',t:'Outreach 15–20 msgs/day with your best-performing message'},{l:'auth',t:'Post content #1 — upgrade your best Month 1 post with new insight'},{l:'cash',t:'Follow up all Month 1 warm leads who didn\'t close'},{l:'sys',t:'Review your 4 SOPs — update anything that doesn\'t match reality'},{l:'self',t:'Start Month 2 reading: content strategy & positioning'}]},
+      {t:'WK2 — QUALITY UP',g:'Better content, better outreach, better discovery call script.',tasks:[{l:'auth',t:'Post content #2 and #3 — try a new format (carousel, text, short video)'},{l:'cash',t:'Outreach 15–20 msgs/day'},{l:'cash',t:'Refine your discovery call script from Month 1 notes'},{l:'cash',t:'Run minimum 2 discovery calls this week'},{l:'sys',t:'Write SOP #5: how I run a discovery call (script + structure)'},{l:'self',t:'30 min: how to stand out vs other editors online'}]},
+      {t:'WK3 — FIRST RETAINER',g:'If no retainer yet — this is the week. Make it happen.',tasks:[{l:'cash',t:'Send retainer proposals to top 3 warm leads — 72hr window'},{l:'cash',t:'Outreach 15–20 msgs/day to fresh prospects'},{l:'auth',t:'Post content #4 and #5 — one must be a case study or result'},{l:'sys',t:'Build client tracker: name, stage, date, value'},{l:'team',t:'Research 2–3 junior editors — what would hiring one cost?'},{l:'self',t:'30 min: how luxury wedding studios think and buy'}]},
+      {t:'WK4 — REVIEW',g:'Month 2 review. Compare numbers. Enter Month 3 with a real target.',tasks:[{l:'auth',t:'Post content #6, #7, #8'},{l:'self',t:'Calculate Month 2 revenue — compare to Month 1'},{l:'self',t:'Calls run? Proposals sent? Retainers closed? Write it all down.'},{l:'self',t:'Write Month 2→3 upgrade plan — what specifically changes?'},{l:'sys',t:'Audit SOPs — could a future hire follow them without you?'},{l:'self',t:'Full rest — Month 3 target is ETB 250K'}]}]},
+    {n:'PROOF',     f:'CASH + SYSTEMS',  rev:'ETB 250K', m:'MY RESULTS DO THE TALKING.',
+     t:['Publish first case study','Outreach 10%+ response rate','Hit ETB 250K','2+ active retainer clients','Learn: pricing, contracts, scope','Begin hire research'],
+     w:[{t:'WK1 — CASE STUDY',g:'Turn your best result into a published trust asset.',tasks:[{l:'auth',t:'Draft case study: client problem → your process → measurable result'},{l:'cash',t:'Outreach 15–20 msgs/day'},{l:'auth',t:'Post content #1 — tease the case study'},{l:'auth',t:'Publish the full case study — most important post yet'},{l:'cash',t:'Send the case study directly to 10 warm prospects in DMs'},{l:'self',t:'Start Month 3 reading: pricing & contracts'}]},
+      {t:'WK2 — RAISE PRICE',g:'With proof in hand, test a higher price on new proposals.',tasks:[{l:'cash',t:'Outreach 15–20 msgs with case study as proof point'},{l:'cash',t:'Run 3+ discovery calls — use your refined script'},{l:'cash',t:'Send proposals 10–15% higher than Month 2 pricing'},{l:'auth',t:'Post content #3 and #4 — insight posts from case study learnings'},{l:'sys',t:'Draft simple 1-page client contract template'},{l:'self',t:'30 min: contract basics, scope creep, retainer terms'}]},
+      {t:'WK3 — TEAM RESEARCH',g:'You can\'t scale past ETB 300K alone. Start groundwork now.',tasks:[{l:'team',t:'Post hiring notice or reach out to 3 junior editors in network'},{l:'team',t:'Define: what tasks would a hire do? What quality standard do they need?'},{l:'cash',t:'Outreach 15–20 msgs/day'},{l:'auth',t:'Post content #5 and #6'},{l:'sys',t:'Package Looms + SOPs into shareable training folder'},{l:'cash',t:'Ask current retainer clients for a written testimonial'}]},
+      {t:'WK4 — STAGE 2 CHECK',g:'3-month mark. How close are you to ETB 300K? Adjust strategy.',tasks:[{l:'auth',t:'Post content #7 and #8'},{l:'self',t:'Calculate Month 3 revenue — write the number'},{l:'self',t:'Stage 2 checkpoint: gap to ETB 300–400K target?'},{l:'self',t:'What\'s still broken? What\'s working? Ruthlessly honest.'},{l:'team',t:'Potential hire identified? What is the exact next step?'},{l:'self',t:'Celebrate 3 months of consistent action — it\'s genuinely rare.'}]}]},
+    {n:'SCALE',     f:'CASH + TEAM',     rev:'ETB 280K', m:'SCALE IS BUILT ON PROOF.',
+     t:['Hire or trial first junior editor','Systematize client onboarding','Hit ETB 280K','4+ retainer conversations','Learn: delegation & quality control','10 content pieces'],
+     w:[{t:'WK1 — HIRE',g:'Make your first hire or start your first paid trial.',tasks:[{l:'team',t:'Interview 2–3 junior editor candidates'},{l:'team',t:'Run a paid test project — assess quality vs your SOP standard'},{l:'cash',t:'Outreach 15 msgs/day'},{l:'auth',t:'Post content #1 and #2'},{l:'sys',t:'Write SOP #6: how I brief a junior editor'},{l:'self',t:'Read 30 min: delegation frameworks'}]},
+      {t:'WK2 — DELEGATE',g:'Hand off one repeatable task to your hire. Check quality loop.',tasks:[{l:'team',t:'Delegate first real task — clear brief + deadline'},{l:'team',t:'Quality review session — specific written feedback'},{l:'cash',t:'Use freed time for more outreach — 20 msgs/day'},{l:'auth',t:'Post content #3 and #4'},{l:'sys',t:'Write SOP #7: quality review checklist for delegated work'},{l:'self',t:'30 min: how to give feedback that improves, not demoralises'}]},
+      {t:'WK3 — PIPELINE',g:'Build the pipeline system. Work needs to come in constantly.',tasks:[{l:'cash',t:'Map full pipeline: prospect → call → proposal → close → deliver'},{l:'cash',t:'Outreach 15–20 msgs/day'},{l:'auth',t:'Post content #5, #6, #7'},{l:'sys',t:'Write SOP #8: full sales pipeline management'},{l:'team',t:'Weekly 15-min sync with hire — feedback + next week tasks'},{l:'self',t:'30 min: pipeline management for service businesses'}]},
+      {t:'WK4 — REVIEW',g:'Month 4 numbers. Is the hire paying for itself?',tasks:[{l:'auth',t:'Post content #8, #9, #10'},{l:'self',t:'Calculate Month 4 revenue'},{l:'team',t:'Hire performance review — keep, improve, or replace?'},{l:'self',t:'Is delegation creating leverage or more work? Honest answer.'},{l:'sys',t:'Update all SOPs based on delegation learnings'},{l:'self',t:'Full rest — Month 5 is systems month'}]}]},
+    {n:'SYSTEM',    f:'SYSTEMS + TEAM',  rev:'ETB 300K', m:'REMOVE YOURSELF AS THE BOTTLENECK.',
+     t:['Hit ETB 300K — Stage 2 floor','Personal execution under 60%','3+ SOPs used by team','Sales pipeline runs without manual follow-up','Learn: operations & business systems','Content publishing consistently'],
+     w:[{t:'WK1 — DOCUMENT',g:'Document everything you do. If it\'s repeatable, it needs an SOP.',tasks:[{l:'sys',t:'Audit all existing SOPs — identify every gap'},{l:'sys',t:'Write SOP #9: end-to-end client delivery process (master SOP)'},{l:'cash',t:'Outreach 15 msgs/day'},{l:'auth',t:'Post content #1 and #2'},{l:'team',t:'Give hire 2 tasks fully documented — no verbal instructions'},{l:'self',t:'Read 30 min: E-Myth Revisited or equivalent'}]},
+      {t:'WK2 — AUTOMATE FOLLOW-UP',g:'Follow-up shouldn\'t require your memory. Build the system.',tasks:[{l:'sys',t:'Create follow-up sequence: Day 1, Day 3, Day 7 message templates'},{l:'cash',t:'Implement follow-up system — every lead gets the sequence'},{l:'auth',t:'Post content #3 and #4'},{l:'team',t:'Hire handling 40% of delivery? Track it.'},{l:'self',t:'30 min: CRM options for small service businesses'}]},
+      {t:'WK3 — REDUCE YOU',g:'Every hour you save is an hour for sales or strategy.',tasks:[{l:'sys',t:'Identify 3 tasks stuck with you — build SOP or delegate each'},{l:'cash',t:'Outreach 15–20 msgs/day'},{l:'auth',t:'Post content #5, #6, #7'},{l:'team',t:'Team sync — review all delegated task quality'},{l:'self',t:'30 min: how to build a business that doesn\'t need you'}]},
+      {t:'WK4 — ETB 300K MILESTONE',g:'Stage 2 floor. Measure. Celebrate. Plan Stage 3.',tasks:[{l:'auth',t:'Post content #8, #9, #10'},{l:'self',t:'Calculate Month 5 revenue — did you hit ETB 300K?'},{l:'self',t:'If yes: plan Stage 3 entry. If no: what exactly is blocking it?'},{l:'sys',t:'Full systems audit — every process that still needs you'},{l:'self',t:'Write your Stage 3 entry plan — what changes Month 7?'},{l:'self',t:'Full rest — you\'re building something real.'}]}]},
+    {n:'DELEGATE',  f:'TEAM + AUTHORITY',rev:'ETB 320K', m:'MY TIME IS MY MOST VALUABLE ASSET.',
+     t:['Personal execution under 50%','Hire handling 50%+ of delivery','Hit ETB 320K','Sales pipeline: 5+ active conversations','Learn: leadership & team management','Authority content driving inbound'],
+     w:[{t:'WK1 — INBOUND',g:'Your content should start bringing leads to you.',tasks:[{l:'auth',t:'Review last 3 months of content — what performed best?'},{l:'auth',t:'Double down on that format — post 3x this week'},{l:'cash',t:'Track: content leads vs outreach leads this month'},{l:'team',t:'Hire weekly sync — raise quality bar with specific examples'},{l:'self',t:'30 min: audience-building for service business owners'}]},
+      {t:'WK2 — PRESSURE TEST',g:'Put your systems under real pressure — can they run without you?',tasks:[{l:'sys',t:'Take one day off — let hire handle delivery completely'},{l:'sys',t:'Review what broke — fix those gaps in SOPs'},{l:'cash',t:'Outreach 10 msgs/day (reduced — systems are the focus)'},{l:'auth',t:'Post content #3 and #4'},{l:'team',t:'Give hire more responsibility — define new scope clearly'},{l:'self',t:'30 min: what great managers do differently'}]},
+      {t:'WK3 — SECOND HIRE?',g:'One hire created leverage. Could a second accelerate Stage 3?',tasks:[{l:'team',t:'Assess: is bottleneck delivery, sales, or content? Hire for bottleneck.'},{l:'team',t:'If yes: start search. If no: maximise current hire first.'},{l:'cash',t:'Outreach 15 msgs/day'},{l:'auth',t:'Post content #5, #6, #7'},{l:'sys',t:'Write financial SOP: how I track revenue, costs, and profit monthly'},{l:'self',t:'30 min: unit economics of a service agency'}]},
+      {t:'WK4 — HALF-YEAR REVIEW',g:'6 months in. Honest full review of everything.',tasks:[{l:'auth',t:'Post content #8, #9, #10'},{l:'self',t:'6-month revenue total — compare to 3-year plan targets'},{l:'self',t:'Personal execution % — trending toward under 40% by Month 12?'},{l:'self',t:'What would Stage 3 look like at your current trajectory?'},{l:'team',t:'Full team review — what\'s working, what isn\'t?'},{l:'self',t:'Rest. You\'ve built half a year of consistent action.'}]}]},
+    {n:'PIPELINE',  f:'CASH + AUTHORITY',rev:'ETB 350K', m:'PREDICTABILITY IS POWER.',t:lt('ETB 350K'),w:lw()},
+    {n:'LEVERAGE',  f:'SYSTEMS + TEAM',  rev:'ETB 370K', m:'SYSTEMS WORK WHILE I SLEEP.',t:lt('ETB 370K'),w:lw()},
+    {n:'AUTHORITY', f:'AUTHORITY + CASH',rev:'ETB 390K', m:'AUTHORITY CONVERTS WHILE I WORK.',t:lt('ETB 390K'),w:lw()},
+    {n:'OPTIMISE',  f:'SYSTEMS + CASH',  rev:'ETB 400K', m:'CUT THE FAT. KEEP THE FIRE.',t:lt('ETB 400K'),w:lw()},
+    {n:'TRANSITION',f:'CASH + TEAM',     rev:'ETB 420K', m:'YEAR 2 IS WHERE IT GETS REAL.',t:lt('ETB 420K'),w:lw()},
+    {n:'YEAR 1',    f:'REVIEW + RESET',  rev:'ETB 400K+',m:'THE FOUNDATION IS BUILT.',t:lt('ETB 400K+'),w:lw()},
+  ];
+
+  // Stage 3: M13–24
+  const s3=[
+    {n:'ORGANISE',  f:'TEAM + SYSTEMS',  rev:'ETB 500K', m:'BUILD THE MACHINE, NOT THE PRODUCT.'},
+    {n:'MANAGER',   f:'TEAM + CASH',     rev:'ETB 600K', m:'MY JOB IS TO LEAD, NOT DO.'},
+    {n:'PIPELINE',  f:'CASH + AUTHORITY',rev:'ETB 700K', m:'THE PIPELINE FEEDS THE MACHINE.'},
+    {n:'BRAND',     f:'AUTHORITY + TEAM',rev:'ETB 750K', m:'BRAND EQUITY COMPOUNDS FOREVER.'},
+    {n:'EXPAND',    f:'CASH + SYSTEMS',  rev:'ETB 800K', m:'EXPAND FROM STRENGTH, NOT NEED.'},
+    {n:'CULTURE',   f:'TEAM + AUTHORITY',rev:'ETB 850K', m:'CULTURE IS THE SYSTEM OF SYSTEMS.'},
+    {n:'PREDICT',   f:'SYSTEMS + CASH',  rev:'ETB 900K', m:'PREDICTABLE REVENUE IS FREEDOM.'},
+    {n:'SELLABLE',  f:'SYSTEMS + TEAM',  rev:'ETB 1M',   m:'BUILD IT SO SOMEONE WOULD BUY IT.'},
+    {n:'CASHFLOW',  f:'CASH + SYSTEMS',  rev:'ETB 1.1M', m:'CASHFLOW IS OXYGEN.'},
+    {n:'AUTHORITY', f:'AUTHORITY + CASH',rev:'ETB 1.2M', m:'AUTHORITY AT SCALE CHANGES EVERYTHING.'},
+    {n:'HARDEN',    f:'SYSTEMS + TEAM',  rev:'ETB 1.3M', m:'HARDENED SYSTEMS SURVIVE CHAOS.'},
+    {n:'STAGE3 END',f:'REVIEW + STAGE4', rev:'ETB 1.5M', m:'THE ORGANISATION IS READY.'},
+  ];
+
+  // Stage 4: M25–35
+  const s4=[
+    {n:'CEO',       f:'STRATEGY + TEAM', rev:'ETB 1.5M', m:'I AM THE VISIONARY, NOT THE WORKER.'},
+    {n:'CAPITAL',   f:'CASH + STRATEGY', rev:'ETB 1.8M', m:'CAPITAL ALLOCATORS WIN LONG TERM.'},
+    {n:'INVEST',    f:'STRATEGY + TEAM', rev:'ETB 2M',   m:'EVERY PROFIT IS DEPLOYED WITH PURPOSE.'},
+    {n:'BRAND',     f:'AUTHORITY + CASH',rev:'ETB 2.2M', m:'THE BRAND OUTLASTS THE BUSINESS.'},
+    {n:'MARGIN',    f:'SYSTEMS + CASH',  rev:'ETB 2.5M', m:'MARGIN IS THE MEASURE OF LEVERAGE.'},
+    {n:'ACQUIRE',   f:'STRATEGY + CASH', rev:'ETB 2.8M', m:'ACQUISITION MULTIPLIES WHAT SYSTEMS BUILT.'},
+    {n:'PORTFOLIO', f:'STRATEGY + TEAM', rev:'ETB 3M',   m:'A PORTFOLIO IS A SYSTEM OF SYSTEMS.'},
+    {n:'NETWORK',   f:'AUTHORITY + TEAM',rev:'ETB 3.2M', m:'YOUR NETWORK IS YOUR NET WORTH.'},
+    {n:'LEGACY',    f:'STRATEGY + AUTH', rev:'ETB 3.5M', m:'BUILD SOMETHING WORTH PASSING ON.'},
+    {n:'SELLABLE',  f:'SYSTEMS + CASH',  rev:'ETB 4M',   m:'IF IT CAN\'T BE SOLD, IT\'S STILL A JOB.'},
+    {n:'EXIT PREP', f:'STRATEGY + TEAM', rev:'ETB 4.5M', m:'PREPARE FOR EVERY OUTCOME.'},
+  ];
+
+  // Stage 5: M36
+  const s5=[{n:'FREEDOM',f:'CHOICE + CAPITAL',rev:'ETB 5M',m:'CAPITAL > EFFORT. YOU CHOSE THIS.'}];
+
+  let id=1;
+  s2.forEach(m=>{M.push({...m,id:id++,stage:2,targets:m.t,weeks:m.w});});
+  s3.forEach(m=>{M.push({...m,id:id++,stage:3,targets:lt(m.rev),weeks:lw()});});
+  s4.forEach(m=>{M.push({...m,id:id++,stage:4,targets:lt(m.rev),weeks:lw()});});
+  s5.forEach(m=>{M.push({...m,id:id++,stage:5,targets:lt(m.rev),weeks:lw()});});
+  return M;
+}
+
+const MONTHS=genMonths();
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let S={
+  month:1, week:{}, view:'plan',
+  checks:{}, reflect:{}, revenue:{}, wins:[],
+  checkins:{}, winFilter:'all'
+};
+
+function load(){try{const d=localStorage.getItem('bridge_v3');if(d)S={...S,...JSON.parse(d)};}catch(e){}}
+function save(){try{localStorage.setItem('bridge_v3',JSON.stringify(S));}catch(e){}}
+function today(){return new Date().toISOString().split('T')[0];}
+
+// ─── STREAK ───────────────────────────────────────────────────────────────────
+function getStreak(){
+  let s=0,d=new Date();
+  while(true){
+    const k=d.toISOString().split('T')[0];
+    const ci=S.checkins[k];
+    if(ci&&ci.levers&&ci.levers.length>0){s++;d.setDate(d.getDate()-1);}else break;
+  }
+  return s;
+}
+function getBest(){
+  const dates=Object.keys(S.checkins).filter(k=>S.checkins[k]?.levers?.length>0).sort();
+  if(!dates.length)return 0;
+  let best=1,cur=1;
+  for(let i=1;i<dates.length;i++){
+    const diff=(new Date(dates[i])-new Date(dates[i-1]))/86400000;
+    if(diff===1){cur++;best=Math.max(best,cur);}else cur=1;
+  }
+  return best;
+}
+
+// ─── KEYS ─────────────────────────────────────────────────────────────────────
+function tk(m,w,t){return`m${m}_w${w}_t${t}`;}
+function rk(m,w,q){return`r_m${m}_w${w}_q${q}`;}
+
+function monthProg(m){
+  let tot=0,dn=0;
+  m.weeks.forEach((w,wi)=>{w.tasks.forEach((_,ti)=>{tot++;if(S.checks[tk(m.id,wi,ti)])dn++;});});
+  return{tot,dn,pct:tot>0?Math.round(dn/tot*100):0};
+}
+
+// ─── SIDEBAR ──────────────────────────────────────────────────────────────────
+function buildSidebar(){
+  const sb=document.getElementById('sidebar');
+  const yrs=[
+    {lbl:'YEAR 1 · STAGE 2',ms:MONTHS.filter(m=>m.stage===2)},
+    {lbl:'YEAR 2 · STAGE 3',ms:MONTHS.filter(m=>m.stage===3)},
+    {lbl:'YEAR 3 · STAGE 4/5',ms:MONTHS.filter(m=>m.stage===4||m.stage===5)},
+  ];
+  let h='';
+  yrs.forEach(y=>{
+    h+=`<div class="sy-label">${y.lbl}</div>`;
+    y.ms.forEach(m=>{
+      const{pct}=monthProg(m);
+      const isA=m.id===S.month;
+      const dotC=pct===100?'background:#1e7a50':isA?'background:var(--gold)':'background:var(--muted2)';
+      h+=`<div class="sm${isA?' active':''}" onclick="selectMonth(${m.id})">
+        <div class="sm-n">${m.id}</div>
+        <div class="sm-name">${m.n||m.name}</div>
+        ${pct>0&&pct<100?`<div class="sm-pct">${pct}%</div>`:`<div class="sm-dot" style="${dotC}"></div>`}
+      </div>`;
+    });
+  });
+  sb.innerHTML=h;
+}
+
+// ─── MONTH ────────────────────────────────────────────────────────────────────
+function buildMonth(m){
+  const{tot,dn,pct}=monthProg(m);
+  const sc=SC[m.stage]||SC[2];
+  const wi=S.week[m.id]||0;
+  const revActual=S.revenue[m.id]||'';
+
+  let h=`
+  <div class="mh">
+    <div class="mh-above">
+      <div class="stage-tag" style="color:${sc.c};border-color:${sc.c};background:${sc.bg}">STAGE ${m.stage}</div>
+      <div class="mh-mon">MONTH ${m.id} OF 36</div>
+    </div>
+    <div class="mh-title">${m.n||m.name}</div>
+    <div class="mh-focus">${m.f||m.focus}</div>
+    <div class="mh-mantra">${m.m||m.mantra}</div>
+  </div>
+  <div class="stats-g">
+    <div class="sc"><div class="sc-label">TARGET</div><div class="sc-val" style="font-size:13px;margin-top:3px;">${m.rev}</div></div>
+    <div class="sc"><div class="sc-label">TASKS</div><div class="sc-val">${dn}<span style="font-size:13px;color:var(--muted)">/${tot}</span></div></div>
+    <div class="sc"><div class="sc-label">DONE</div><div class="sc-val">${pct}%</div></div>
+  </div>
+  <div class="prog">
+    <div class="prog-h"><div class="prog-lbl">MONTH PROGRESS</div><div class="prog-pct">${pct}%</div></div>
+    <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+  </div>
+  <div class="rev-row">
+    <div class="rev-label">ACTUAL REVENUE</div>
+    <input class="rev-input" type="text" value="${revActual}" placeholder="0" oninput="saveRev(${m.id},this.value)">
+    <div class="rev-unit">ETB / MONTH</div>
+  </div>
+  <div class="tbox">
+    <div class="tbox-lbl">MONTH TARGETS</div>
+    <ul class="tlist">${m.targets.map(t=>`<li>${t}</li>`).join('')}</ul>
+  </div>
+  <div class="wtabs">`;
+
+  m.weeks.forEach((w,wii)=>{
+    const allD=w.tasks.every((_,ti)=>S.checks[tk(m.id,wii,ti)]);
+    h+=`<div class="wtab${wii===wi?' active':''}${allD?' wdone':''}" onclick="selWeek(${m.id},${wii})">${['WK1','WK2','WK3','WK4'][wii]}</div>`;
+  });
+  h+=`</div>`;
+
+  const LM={cash:{lbl:'CASH',c:'#c9a84c'},auth:{lbl:'AUTHORITY',c:'#c0621a'},sys:{lbl:'SYSTEMS',c:'#2a6cb0'},team:{lbl:'TEAM',c:'#7b4ea0'},self:{lbl:'SELF',c:'#1e7a50'}};
+
+  m.weeks.forEach((w,wii)=>{
+    h+=`<div class="wpanel${wii===wi?' active':''}">
+      <div class="wgoal"><div class="wg-t">${w.t}</div><div class="wg-d">${w.g}</div></div>`;
+    const grps={cash:[],auth:[],sys:[],team:[],self:[]};
+    w.tasks.forEach((t,ti)=>{if(grps[t.l])grps[t.l].push({t,ti});});
+    Object.entries(grps).forEach(([lv,items])=>{
+      if(!items.length)return;
+      const lm=LM[lv];
+      h+=`<div class="tg"><div class="tg-h"><div class="lpip" style="background:${lm.c}"></div>${lm.lbl}<div class="tg-line"></div></div>`;
+      items.forEach(({t,ti})=>{
+        const key=tk(m.id,wii,ti);const isDone=!!S.checks[key];
+        h+=`<div class="ti${isDone?' done':''}" onclick="toggleTask('${key}')">
+          <div class="tcb${isDone?' chk':''}"></div>
+          <div class="tt${isDone?' done':''}">${t.t}</div>
+        </div>`;
+      });
+      h+=`</div>`;
+    });
+
+    // Reflection
+    const rqs=['What was your biggest WIN this week?','What\'s ONE thing that didn\'t work — and why?','What will you do DIFFERENTLY next week?'];
+    h+=`<div class="reflect-box">
+      <div class="reflect-title">WEEKLY REFLECTION</div>`;
+    rqs.forEach((q,qi)=>{
+      const key=rk(m.id,wii,qi);const val=(S.reflect[key]||'').replace(/"/g,'&quot;');
+      h+=`<div class="rq"><div class="rq-label">0${qi+1} — ${q.toUpperCase()}</div>
+        <textarea class="rq-input" placeholder="Write your answer..." oninput="saveReflect('${key}',this.value)">${val}</textarea></div>`;
+    });
+    h+=`</div>`;
+
+    // Monthly scorecard (WK4 only)
+    if(wii===3){
+      h+=`<div class="scorecard" style="margin-top:12px;">
+        <div class="sc-title">MONTHLY SCORECARD</div>
+        <div style="font-family:var(--font-m);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:12px;">RATE YOURSELF 1–10 ON EACH LEVER THIS MONTH</div>`;
+      LEVERS.forEach(lv=>{
+        const skey=`sc_m${m.id}_${lv.id}`;
+        const val=S.reflect[skey]||5;
+        h+=`<div class="sc-lever">
+          <div class="sc-lname"><div class="lpip" style="background:${lv.color}"></div>${lv.name}</div>
+          <div class="sc-slider-row">
+            <input type="range" class="sc-slider" min="1" max="10" value="${val}" step="1"
+              oninput="saveReflect('${skey}',this.value);this.previousElementSibling&&(this.nextElementSibling.textContent=this.value)"
+              onchange="saveReflect('${skey}',this.value)">
+            <div class="sc-val-disp">${val}</div>
+          </div>
+          <div class="sc-labels"><span>WEAK</span><span>STRONG</span></div>
+        </div>`;
+      });
+      h+=`</div>`;
+    }
+
+    h+=`</div>`;
+  });
+  return h;
+}
+
+// ─── CHECK-IN ─────────────────────────────────────────────────────────────────
+function buildCheckin(){
+  const td=today();
+  const ci=S.checkins[td]||{};
+  const pulled=ci.levers||[];
+  const locked=!!ci.locked;
+  document.getElementById('ciDate').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}).toUpperCase();
+  let h='';
+  LEVERS.forEach(lv=>{
+    const ip=pulled.includes(lv.id);
+    h+=`<div class="lc${ip?' pulled':''}" onclick="toggleLever('${lv.id}')">
+      <div class="lc-icon" style="background:${lv.bg}">${lv.icon}</div>
+      <div class="lc-body"><div class="lc-name">${lv.name}</div><div class="lc-desc">${lv.desc}</div></div>
+      <div class="lc-cb${ip?' chk':''}"></div>
+    </div>`;
+  });
+  document.getElementById('leverCards').innerHTML=h;
+  const btn=document.getElementById('subBtn');
+  if(locked){btn.textContent='✓ TODAY LOCKED IN';btn.disabled=true;btn.classList.add('done-state');}
+  else{btn.textContent='LOCK IN TODAY';btn.disabled=false;btn.classList.remove('done-state');}
+}
+
+function toggleLever(id){
+  const td=today();
+  if(S.checkins[td]?.locked)return;
+  if(!S.checkins[td])S.checkins[td]={levers:[]};
+  const ci=S.checkins[td];
+  const idx=ci.levers.indexOf(id);
+  if(idx>-1)ci.levers.splice(idx,1);else ci.levers.push(id);
+  save();buildCheckin();
+}
+
+function submitCheckin(){
+  const td=today();
+  const ci=S.checkins[td];
+  if(!ci||!ci.levers||ci.levers.length===0){alert('Pull at least ONE lever before locking in!');return;}
+  ci.locked=true;save();buildCheckin();updateStreak();
+}
+
+// ─── STREAK ───────────────────────────────────────────────────────────────────
+function buildStreak(){
+  const streak=getStreak(),best=getBest();
+  document.getElementById('bigStreak').textContent=streak;
+  document.getElementById('bestStreak').textContent=best;
+  const days=['S','M','T','W','T','F','S'];
+  let h=days.map(d=>`<div class="cal-lbl">${d}</div>`).join('');
+  const now=new Date(),start=new Date(now);start.setDate(start.getDate()-34);
+  const fp=start.getDay();
+  for(let i=0;i<fp;i++)h+=`<div class="cal-d"></div>`;
+  for(let i=0;i<35;i++){
+    const d=new Date(start);d.setDate(d.getDate()+i);
+    if(d>now)break;
+    const key=d.toISOString().split('T')[0];
+    const ci=S.checkins[key];
+    const has=ci&&ci.levers&&ci.levers.length>0;
+    const full=has&&ci.levers.length>=4;
+    const isTd=key===today();
+    h+=`<div class="cal-d${has?' has':''}${full?' full':''}${isTd?' today':''}">${d.getDate()}</div>`;
+  }
+  document.getElementById('calGrid').innerHTML=h;
+  const counts={cash:0,auth:0,sys:0,team:0,self:0};
+  const total=Math.max(Object.keys(S.checkins).length,1);
+  Object.values(S.checkins).forEach(ci=>{if(ci.levers)ci.levers.forEach(l=>{if(counts[l]!==undefined)counts[l]++;});});
+  let ls='';
+  LEVERS.forEach(lv=>{
+    const pct=Math.round(counts[lv.id]/total*100);
+    ls+=`<div class="ls-c">
+      <div class="ls-h"><div class="ls-icon" style="background:${lv.bg}">${lv.icon}</div><div class="ls-name" style="color:${lv.color}">${lv.name}</div></div>
+      <div class="ls-bar"><div class="ls-fill" style="width:${pct}%;background:${lv.color}"></div></div>
+      <div class="ls-pct">${pct}% of days</div>
+    </div>`;
+  });
+  document.getElementById('leverStats').innerHTML=ls;
+}
+
+// ─── REVENUE ──────────────────────────────────────────────────────────────────
+function buildRevenue(){
+  let total=0,logged=0;
+  let rows='';
+  MONTHS.forEach(m=>{
+    const actual=parseFloat(S.revenue[m.id])||0;
+    if(actual>0){total+=actual;logged++;}
+    const targetNum=parseFloat((m.rev||'').replace(/[^0-9.]/g,''))||0;
+    const pct=targetNum>0?Math.min(Math.round(actual/targetNum*100),100):0;
+    const barColor=pct>=100?'var(--green)':pct>=70?'var(--gold)':'var(--red)';
+    rows+=`<div class="rv-month">
+      <div class="rv-m-num">${m.id}</div>
+      <div class="rv-m-inner">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+          <div class="rv-m-name">${m.n||m.name}</div>
+          <div class="rv-m-target">${m.rev}</div>
+          <input class="rv-m-input" type="text" value="${S.revenue[m.id]||''}" placeholder="actual"
+            oninput="saveRev(${m.id},this.value)" onchange="buildRevenue()">
+        </div>
+        <div class="rv-bar"><div class="rv-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('rvTotal').textContent=`ETB ${total.toLocaleString()}`;
+  document.getElementById('rvCount').textContent=`${logged} / 36`;
+  document.getElementById('rvList').innerHTML=rows;
+}
+
+function saveRev(id,val){S.revenue[id]=val;save();}
+
+// ─── WINS ─────────────────────────────────────────────────────────────────────
+const WIN_CATS=['all','cash','authority','systems','team','personal'];
+
+function buildWins(){
+  // Filter buttons
+  let fb='';
+  WIN_CATS.forEach(c=>{fb+=`<button class="wf-btn${S.winFilter===c?' active':''}" onclick="setWinFilter('${c}')">${c.toUpperCase()}</button>`;});
+  document.getElementById('winFilter').innerHTML=fb;
+  // Wins
+  const filtered=S.winFilter==='all'?S.wins:S.wins.filter(w=>w.cat===S.winFilter);
+  if(!filtered.length){document.getElementById('winList').innerHTML=`<div class="empty">NO WINS LOGGED YET.<br>START WITH YOUR SMALLEST WIN TODAY.</div>`;return;}
+  let h='';
+  [...filtered].reverse().forEach((w,i)=>{
+    const ri=S.wins.length-1-(S.winFilter==='all'?i:S.wins.indexOf(w));
+    h+=`<div class="win-card">
+      <div class="wc-star">⭐</div>
+      <div class="wc-body">
+        <div class="wc-text">${w.text}</div>
+        <div class="wc-meta">${w.date} · ${(w.cat||'personal').toUpperCase()} · MONTH ${w.month||'?'}</div>
+      </div>
+      <button class="wc-del" onclick="delWin(${S.wins.indexOf(w)})">✕</button>
+    </div>`;
+  });
+  document.getElementById('winList').innerHTML=h;
+}
+
+function addWin(){
+  const inp=document.getElementById('winInput');
+  const txt=inp.value.trim();
+  if(!txt)return;
+  S.wins.push({text:txt,date:today(),month:S.month,cat:'personal'});
+  inp.value='';save();buildWins();
+}
+
+function delWin(i){
+  if(confirm('Remove this win?')){S.wins.splice(i,1);save();buildWins();}
+}
+
+function setWinFilter(c){S.winFilter=c;buildWins();}
+
+// ─── OVERVIEW ─────────────────────────────────────────────────────────────────
+function buildOverview(){
+  let h='';
+  MONTHS.forEach(m=>{
+    const{pct}=monthProg(m);
+    const sc=SC[m.stage]||SC[2];
+    h+=`<div class="ov-card" onclick="selectMonth(${m.id});switchView('plan')">
+      <div class="ov-st" style="color:${sc.c}">S${m.stage} · M${m.id}</div>
+      <div class="ov-name">${m.n||m.name}</div>
+      <div class="ov-rev">${m.rev}</div>
+      <div class="ov-pb"><div class="ov-pf" style="width:${pct}%;background:${sc.c}"></div></div>
+      <div class="ov-pm">${pct}%</div>
+    </div>`;
+  });
+  document.getElementById('overviewGrid').innerHTML=h;
+}
+
+// ─── ACTIONS ──────────────────────────────────────────────────────────────────
+function selectMonth(id){S.month=id;save();renderAll();switchView('plan');}
+function selWeek(mId,wi){S.week[mId]=wi;save();renderMonth();}
+function toggleTask(key){S.checks[key]=!S.checks[key];save();renderAll();}
+function saveReflect(key,val){S.reflect[key]=val;save();}
+
+function switchView(v){
+  S.view=v;
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  const order=['plan','checkin','streak','revenue','wins','overview'];
+  const idx=order.indexOf(v);if(idx>-1)document.querySelectorAll('.ntab')[idx]?.classList.add('active');
+  if(v==='checkin')buildCheckin();
+  if(v==='streak')buildStreak();
+  if(v==='revenue')buildRevenue();
+  if(v==='wins')buildWins();
+  if(v==='overview')buildOverview();
+}
+
+function updateStreak(){document.getElementById('streakNum').textContent=getStreak();}
+
+function showOverlay(type){
+  if(type==='anchor'){document.getElementById('overlay-anchor').classList.add('show');}
+  else{document.getElementById('overlay-panic').classList.add('show');}
+}
+function hideOverlay(type){
+  if(type==='anchor'){document.getElementById('overlay-anchor').classList.remove('show');}
+  else{document.getElementById('overlay-panic').classList.remove('show');}
+}
+
+// Add anchor button to panic overlay
+document.addEventListener('DOMContentLoaded',()=>{
+  const pb=document.querySelector('.panic-rule');
+  if(pb){const ab=document.createElement('button');ab.className='anchor-btn';ab.style.marginTop='10px';ab.style.background='var(--gold-dim)';ab.style.color='var(--gold)';ab.style.border='1px solid rgba(201,168,76,0.3)';ab.textContent='READ YOUR ANCHOR →';ab.onclick=()=>{hideOverlay('panic');showOverlay('anchor');};pb.after(ab);}
+});
+
+function renderMonth(){
+  const m=MONTHS.find(x=>x.id===S.month);
+  if(!m)return;
+  document.getElementById('monthContent').innerHTML=buildMonth(m);
+}
+
+function renderAll(){buildSidebar();renderMonth();updateStreak();}
+
+// Keyboard shortcuts
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){hideOverlay('panic');hideOverlay('anchor');}
+});
+
+load();renderAll();
+</script>
+</body>
+</html>
