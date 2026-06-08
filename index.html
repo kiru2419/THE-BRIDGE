@@ -290,8 +290,20 @@ body{background:var(--bg);color:var(--white);font-family:var(--font-b);height:10
 .empty{text-align:center;padding:32px;font-family:var(--font-m);font-size:10px;color:var(--muted);letter-spacing:1px;}
 
 /* ── MOBILE BOTTOM NAV ─────────────────────────────────────────────── */
-.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--surface);border-top:1px solid var(--border);z-index:200;flex-shrink:0;}
-.mob-nav-inner{display:flex;align-items:stretch;height:100%;}
+.mob-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  z-index: 210;
+  flex-shrink: 0;
+  justify-content: center;
+}
+.mob-nav-inner{display:flex;align-items:center;justify-content:space-around;height:100%;}
 .mn-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;color:var(--muted);cursor:pointer;padding:4px 2px;transition:color .2s;-webkit-tap-highlight-color:transparent;}
 .mn-btn.active{color:var(--gold);}
 .mn-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
@@ -605,12 +617,12 @@ body{background:var(--bg);color:var(--white);font-family:var(--font-b);height:10
 </nav>
 
 <!-- MOBILE MORE MENU -->
-<div id="moreMenu" style="display:none;position:fixed;bottom:60px;right:0;left:0;background:var(--surface);border-top:1px solid var(--border);z-index:199;padding:8px;">
+<div id="moreMenu" style="display:none;position:fixed;bottom:56px;right:0;left:0;background:var(--surface);border-top:1px solid var(--border);z-index:199;padding:8px;">
   <div style="display:flex;gap:6px;flex-wrap:wrap;padding:4px 8px;">
-    <button class="ntab" onclick="switchView('revenue');toggleMoreMenu()" style="flex:1;min-width:80px;text-align:center;">REVENUE</button>
-    <button class="ntab" onclick="switchView('wins');toggleMoreMenu()" style="flex:1;min-width:80px;text-align:center;">WINS</button>
-    <button class="ntab" onclick="switchView('overview');toggleMoreMenu()" style="flex:1;min-width:80px;text-align:center;">OVERVIEW</button>
-    <button class="ntab" onclick="showOverlay('panic');toggleMoreMenu()" style="flex:1;min-width:80px;text-align:center;color:var(--red);">⚡ LOST?</button>
+    <button class="ntab" onclick="switchView('revenue')" style="flex:1;min-width:80px;text-align:center;">REVENUE</button>
+    <button class="ntab" onclick="switchView('wins')" style="flex:1;min-width:80px;text-align:center;">WINS</button>
+    <button class="ntab" onclick="switchView('overview')" style="flex:1;min-width:80px;text-align:center;">OVERVIEW</button>
+    <button class="ntab" onclick="showOverlay('panic');hideMoreMenu()" style="flex:1;min-width:80px;text-align:center;color:var(--red);">⚡ LOST?</button>
   </div>
 </div>
 
@@ -794,7 +806,10 @@ function buildSidebar(){
       </div>`;
     });
   });
-  sb.innerHTML=h;
+  // Preserve the mobile sidebar header
+  const mobileHeader = sb.querySelector('.mob-sidebar-header');
+  const headerHTML = mobileHeader ? mobileHeader.outerHTML : `<div class="mob-sidebar-header"><span style="font-family:var(--font-d);font-size:14px;letter-spacing:2px;color:var(--gold);">MONTHS</span><button class="mob-sidebar-close" onclick="closeSidebar()">✕</button></div>`;
+  sb.innerHTML = headerHTML + h;
 }
 
 // ─── MONTH ────────────────────────────────────────────────────────────────────
@@ -1062,7 +1077,7 @@ function buildOverview(){
 }
 
 // ─── ACTIONS ──────────────────────────────────────────────────────────────────
-function selectMonth(id){S.month=id;save();renderAll();switchView('plan');}
+function selectMonth(id){S.month=id;save();renderAll();switchView('plan');closeSidebar();}
 function selWeek(mId,wi){S.week[mId]=wi;save();renderMonth();}
 function toggleTask(key){S.checks[key]=!S.checks[key];save();renderAll();}
 function saveReflect(key,val){S.reflect[key]=val;save();}
@@ -1074,6 +1089,18 @@ function switchView(v){
   document.getElementById('view-'+v).classList.add('active');
   const order=['plan','checkin','streak','revenue','wins','overview'];
   const idx=order.indexOf(v);if(idx>-1)document.querySelectorAll('.ntab')[idx]?.classList.add('active');
+  // Update mobile bottom nav active states
+  document.querySelectorAll('.mn-btn').forEach(el=>el.classList.remove('active'));
+  const mnMap={plan:'mn-plan',checkin:'mn-checkin',streak:'mn-streak'};
+  if(mnMap[v]){
+    const mb=document.getElementById(mnMap[v]);if(mb)mb.classList.add('active');
+  } else {
+    // Revenue, Wins, Overview → highlight the MORE button
+    const moreBtn=document.getElementById('mn-more');if(moreBtn)moreBtn.classList.add('active');
+  }
+  // Close sidebar and more menu when switching views
+  closeSidebar();
+  hideMoreMenu();
   if(v==='checkin')buildCheckin();
   if(v==='streak')buildStreak();
   if(v==='revenue')buildRevenue();
@@ -1108,8 +1135,38 @@ function renderAll(){buildSidebar();renderMonth();updateStreak();}
 
 // Keyboard shortcuts
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){hideOverlay('panic');hideOverlay('anchor');}
+  if(e.key==='Escape'){hideOverlay('panic');hideOverlay('anchor');closeSidebar();hideMoreMenu();}
 });
+
+// ─── MOBILE SIDEBAR & MORE MENU ──────────────────────────────────────────────
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  const ov=document.getElementById('sidebarOverlay');
+  sb.classList.toggle('mob-open');
+  if(sb.classList.contains('mob-open')){
+    ov.classList.add('show');
+    hideMoreMenu();
+  } else {
+    ov.classList.remove('show');
+  }
+}
+
+function closeSidebar(){
+  const sb=document.getElementById('sidebar');
+  const ov=document.getElementById('sidebarOverlay');
+  sb.classList.remove('mob-open');
+  ov.classList.remove('show');
+}
+
+function toggleMoreMenu(){
+  const mm=document.getElementById('moreMenu');
+  mm.style.display = mm.style.display==='none' ? 'block' : 'none';
+}
+
+function hideMoreMenu(){
+  const mm=document.getElementById('moreMenu');
+  if(mm) mm.style.display='none';
+}
 
 load();renderAll();
 </script>
