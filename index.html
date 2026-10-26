@@ -448,6 +448,61 @@ body{background:var(--bg);color:var(--white);font-family:var(--font-b);height:10
   .ti{padding:9px 10px;}
   .tt{font-size:12px;}
 }
+
+/* ROAD · LESSONS · BACKUP */
+.road-next{background:var(--gold-dim);border:1px solid rgba(201,168,76,0.3);border-radius:var(--r);padding:14px 16px;margin-bottom:14px;}
+.rn-lbl{font-family:var(--font-m);font-size:9px;letter-spacing:2px;color:var(--gold);margin-bottom:4px;}
+.rn-t{font-family:var(--font-d);font-size:26px;letter-spacing:2px;line-height:1.1;}
+.rn-d{font-size:12px;color:#b8b2a0;margin-top:4px;line-height:1.5;}
+.rung{display:flex;gap:12px;padding:12px 10px;border-left:2px solid var(--muted2);margin-left:7px;cursor:pointer;position:relative;}
+.rung:hover{background:var(--surface);}
+.rung-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--muted);background:var(--bg);flex-shrink:0;margin-left:-19px;margin-top:2px;}
+.rung.on{border-left-color:var(--green);}
+.rung.on .rung-dot{background:var(--green);border-color:var(--green);}
+.rung.now .rung-dot{border-color:var(--gold);box-shadow:0 0 0 4px var(--gold-dim);}
+.rung.hire .rung-t{color:#b58be0;}
+.rung.hire .rung-dot{border-color:var(--purple);}
+.rung.hire.on .rung-dot{background:var(--purple);}
+.rung-t{font-size:13px;font-weight:500;}
+.rung.on .rung-t{text-decoration:line-through;color:var(--muted);}
+.rung-d{font-size:11px;color:#9a9482;margin-top:2px;line-height:1.5;}
+.rung-m{font-family:var(--font-m);font-size:8px;letter-spacing:1px;color:var(--muted);margin-top:4px;}
+.les-form{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.les-lbl{font-family:var(--font-m);font-size:8px;letter-spacing:2px;color:var(--muted);margin-top:6px;}
+.les-levers{display:flex;flex-wrap:wrap;gap:6px;}
+.les-lv{font-family:var(--font-m);font-size:9px;letter-spacing:1px;padding:6px 10px;border-radius:var(--r);border:1px solid var(--muted2);background:transparent;color:var(--muted);cursor:pointer;}
+.les-lv.on{border-color:var(--c);color:var(--c);background:var(--surface2);}
+.les-card{background:var(--surface);border:1px solid var(--border2);border-left:3px solid var(--c);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;}
+.les-top{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.les-top .wc-del{margin-left:auto;}
+.les-tag{font-family:var(--font-m);font-size:8px;letter-spacing:1px;color:var(--c);border:1px solid var(--c);padding:2px 6px;border-radius:20px;}
+.les-what{font-size:12px;color:#b8b2a0;line-height:1.5;}
+.les-arrow{font-family:var(--font-m);font-size:8px;letter-spacing:2px;color:var(--c);margin:6px 0 2px;}
+.les-lesson{font-size:13px;color:var(--white);line-height:1.5;}
+.bk-box{margin-top:22px;padding:14px 16px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);max-width:620px;}
+.bk-title{font-family:var(--font-d);font-size:18px;letter-spacing:2px;color:var(--gold);}
+.bk-text{font-size:11px;color:#9a9482;line-height:1.5;margin:4px 0 10px;}
+.bk-row{display:flex;gap:8px;flex-wrap:wrap;}
+.bk-alt{background:transparent;border:1px solid rgba(201,168,76,0.4);color:var(--gold);}
+.bk-meta{font-family:var(--font-m);font-size:8px;letter-spacing:1px;color:var(--muted);margin-top:10px;}
+
+.gl{background:var(--surface);border:1px solid rgba(201,168,76,0.25);border-radius:var(--r);padding:14px 16px;margin-bottom:16px;}
+.gl-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.gl-t{font-family:var(--font-d);font-size:22px;letter-spacing:3px;color:var(--gold);}
+.gl-s{font-family:var(--font-m);font-size:8px;letter-spacing:1.5px;color:var(--muted);}
+.gl-row{display:grid;grid-template-columns:minmax(120px,1.1fr) 2fr auto;align-items:center;gap:10px;margin-bottom:8px;}
+.gl-lbl{font-family:var(--font-m);font-size:8px;letter-spacing:1px;color:#9a9482;}
+.gl-bar{height:6px;background:var(--muted2);border-radius:3px;overflow:hidden;}
+.gl-fill{height:100%;background:var(--gold);border-radius:3px;transition:width .3s;}
+.gl-nums{display:flex;align-items:center;gap:4px;font-family:var(--font-m);font-size:11px;color:var(--muted);}
+.gl-in{width:64px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--r);padding:4px 6px;color:var(--white);font-family:var(--font-m);font-size:11px;text-align:right;outline:none;}
+.gl-in:focus{border-color:rgba(201,168,76,0.4);}
+.gl-tgt{color:var(--gold);}
+.gl-hire{font-size:11px;line-height:1.5;color:#b58be0;border-top:1px dashed var(--muted2);padding-top:10px;margin-top:4px;}
+.gl-hire.on{color:var(--green-bright);}
+.gl-warn{font-family:var(--font-m);font-size:8px;letter-spacing:1px;color:var(--red);margin-top:8px;}
+.gl-link{background:none;border:none;color:var(--gold);font-family:var(--font-m);font-size:8px;letter-spacing:1px;cursor:pointer;text-decoration:underline;padding:0;}
+@media(max-width:640px){.gl-row{grid-template-columns:1fr auto;}.gl-bar{grid-column:1/3;order:3;}}
 </style>
 </head>
 <body>
@@ -461,6 +516,8 @@ body{background:var(--bg);color:var(--white);font-family:var(--font-b);height:10
     <button class="ntab" onclick="switchView('streak')">STREAK</button>
     <button class="ntab" onclick="switchView('revenue')">REVENUE</button>
     <button class="ntab" onclick="switchView('wins')">WINS</button>
+    <button class="ntab" onclick="switchView('lessons')">LESSONS</button>
+    <button class="ntab" onclick="switchView('road')">ROAD</button>
     <button class="ntab" onclick="switchView('overview')">OVERVIEW</button>
   </div>
   <div class="streak-pill" onclick="switchView('streak')">
@@ -488,6 +545,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--font-b);height:10
 
     <!-- PLAN -->
     <div class="view active" id="view-plan">
+      <div id="gateLane"></div>
       <div id="monthContent"></div>
     </div>
 
@@ -546,6 +604,34 @@ body{background:var(--bg);color:var(--white);font-family:var(--font-b);height:10
       </div>
     </div>
 
+    <!-- LESSONS -->
+    <div class="view" id="view-lessons">
+      <div class="wl-wrap">
+        <div class="wl-title">HARD WEEK LOG</div>
+        <div class="wl-sub">EVERY HARD THING POINTS AT A GOAL · WRITE IT DOWN, THEN LET IT GO</div>
+        <div class="les-form">
+          <label class="les-lbl" for="lesWhat">WHAT HAPPENED</label>
+          <textarea class="rq-input" id="lesWhat" placeholder="The scope changed mid-edit and I patched instead of rebuilding..."></textarea>
+          <label class="les-lbl" for="lesLesson">SO NOW I KNOW / I WILL</label>
+          <textarea class="rq-input" id="lesLesson" placeholder="Lock length and purpose before I start. If it changes, restart clean."></textarea>
+          <div class="les-lbl">WHICH LEVER DOES IT FEED</div>
+          <div class="les-levers" id="lesLevers"></div>
+          <button class="wl-btn" style="width:100%;margin-top:10px;" onclick="addLesson()">LOG THE LESSON</button>
+        </div>
+        <div id="lesList"></div>
+      </div>
+    </div>
+
+    <!-- ROAD -->
+    <div class="view" id="view-road">
+      <div class="wl-wrap">
+        <div class="wl-title">THE ROAD</div>
+        <div class="wl-sub">RUNGS YOU CAN WALK · NOT A CEILING · TAP A RUNG WHEN YOU STAND ON IT</div>
+        <div class="road-next" id="roadNext"></div>
+        <div id="roadList"></div>
+      </div>
+    </div>
+
     <!-- OVERVIEW -->
     <div class="view" id="view-overview">
       <div style="margin-bottom:14px;">
@@ -553,6 +639,16 @@ body{background:var(--bg);color:var(--white);font-family:var(--font-b);height:10
         <div style="font-family:var(--font-m);font-size:9px;color:var(--muted);letter-spacing:2px;">STAGE 2 → 5 · ALL 36 MONTHS</div>
       </div>
       <div class="ov-g" id="overviewGrid"></div>
+      <div class="bk-box">
+        <div class="bk-title">BACKUP YOUR PROGRESS</div>
+        <div class="bk-text">Everything you tick lives only in this browser. Export a file now and then, and import it on any other device.</div>
+        <div class="bk-row">
+          <button class="wl-btn" onclick="exportData()">EXPORT BACKUP</button>
+          <button class="wl-btn bk-alt" onclick="document.getElementById('bkFile').click()">IMPORT BACKUP</button>
+          <input type="file" id="bkFile" accept="application/json,.json" style="display:none" onchange="importData(this)">
+        </div>
+        <div class="bk-meta" id="bkMeta"></div>
+      </div>
     </div>
 
   </div>
@@ -621,6 +717,8 @@ body{background:var(--bg);color:var(--white);font-family:var(--font-b);height:10
   <div style="display:flex;gap:6px;flex-wrap:wrap;padding:4px 8px;">
     <button class="ntab" onclick="switchView('revenue')" style="flex:1;min-width:80px;text-align:center;">REVENUE</button>
     <button class="ntab" onclick="switchView('wins')" style="flex:1;min-width:80px;text-align:center;">WINS</button>
+    <button class="ntab" onclick="switchView('lessons')" style="flex:1;min-width:80px;text-align:center;">LESSONS</button>
+    <button class="ntab" onclick="switchView('road')" style="flex:1;min-width:80px;text-align:center;">ROAD</button>
     <button class="ntab" onclick="switchView('overview')" style="flex:1;min-width:80px;text-align:center;">OVERVIEW</button>
     <button class="ntab" onclick="showOverlay('panic');hideMoreMenu()" style="flex:1;min-width:80px;text-align:center;color:var(--red);">⚡ LOST?</button>
   </div>
@@ -655,7 +753,7 @@ function genMonths(){
   // ── STAGE 2: M1–12 ──────────────────────────────────────────────────────────
   const s2=[
     {n:'LAUNCH',    f:'CASH + AUTHORITY',rev:'ETB 120K', m:'I AM NOT BEHIND. I AM BUILDING.',
-     t:['Post first content — before/after reel','Daily outreach 15 msgs/day','Run 2–3 discovery calls','Send first retainer proposal','Learn: sales & closing','Hit ETB 120K revenue'],
+     t:['Post first content — before/after reel','Daily outreach 15 msgs/day','Run 2–3 discovery calls','Send first retainer proposal','Learn: sales & closing','Hit ETB 120K revenue','Hire rung: when one retainer covers a helper\'s monthly cost, book one paid test edit (see ROAD)'],
      w:[{t:'WK1 — ACTIVATE',g:'Break the standstill. Post content #1. Restart outreach. Lock in morning ignition.',tasks:[{l:'cash',t:'Morning ignition: spiritual study → write ONE must-do → no phone until done'},{l:'cash',t:'Send 15 outreach messages to luxury wedding studios worldwide'},{l:'auth',t:'3PM block: create before/after reel from your best wedding edit'},{l:'auth',t:'Post reel — English caption explaining what problem it solves'},{l:'cash',t:'Follow up on replies — book discovery calls'},{l:'sys',t:'Record a Loom of your editing workflow (rough is fine, 5–10 min)'},{l:'self',t:'30 min: sales & closing — start your Month 1 resource'}]},
       {t:'WK2 — CONVERT',g:'Run first discovery calls. Send proposals. Write SOP #1.',tasks:[{l:'cash',t:'Outreach 15 msgs/day every weekday'},{l:'cash',t:'Run any discovery calls booked from Week 1'},{l:'auth',t:'Post content #2 — process clip or insight post'},{l:'cash',t:'Send retainer proposal to any warm prospect'},{l:'sys',t:'Write SOP #1: how I receive and organise footage from a client'},{l:'sys',t:'Write SOP #2: my editing quality checklist before delivery'},{l:'self',t:'30 min: objection handling techniques'}]},
       {t:'WK3 — CLOSE',g:'Push for first retainer close. Improve outreach from real data.',tasks:[{l:'cash',t:'Rewrite outreach message using what got the most replies'},{l:'cash',t:'15 msgs/day improved + follow all open proposals'},{l:'cash',t:'Send retainer proposal to strongest lead — 48hr window'},{l:'sys',t:'Write SOP #3: client onboarding — what I send after yes'},{l:'auth',t:'Post content #3 — why this agency is your bridge to freedom'},{l:'sys',t:'Record Loom: your full retainer delivery process'},{l:'self',t:'30 min: pricing & framing value'}]},
@@ -746,11 +844,12 @@ const MONTHS=genMonths();
 let S={
   month:1, week:{}, view:'plan',
   checks:{}, reflect:{}, revenue:{}, wins:[],
-  checkins:{}, winFilter:'all'
+  checkins:{}, winFilter:'all', lessons:[], road:{}, lastBackup:'', gate:{clients:0,mrr:0,months:0,tc:3,tm:5000,tn:3,hireAt:0}
 };
 
 function load(){try{const d=localStorage.getItem('bridge_v3');if(d)S={...S,...JSON.parse(d)};}catch(e){}}
 function save(){try{localStorage.setItem('bridge_v3',JSON.stringify(S));}catch(e){}}
+function esc(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function today(){return new Date().toISOString().split('T')[0];}
 
 // ─── STREAK ───────────────────────────────────────────────────────────────────
@@ -1036,7 +1135,7 @@ function buildWins(){
     h+=`<div class="win-card">
       <div class="wc-star">⭐</div>
       <div class="wc-body">
-        <div class="wc-text">${w.text}</div>
+        <div class="wc-text">${esc(w.text)}</div>
         <div class="wc-meta">${w.date} · ${(w.cat||'personal').toUpperCase()} · MONTH ${w.month||'?'}</div>
       </div>
       <button class="wc-del" onclick="delWin(${S.wins.indexOf(w)})">✕</button>
@@ -1074,6 +1173,7 @@ function buildOverview(){
     </div>`;
   });
   document.getElementById('overviewGrid').innerHTML=h;
+  buildBackupMeta();
 }
 
 // ─── ACTIONS ──────────────────────────────────────────────────────────────────
@@ -1087,7 +1187,7 @@ function switchView(v){
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.ntab').forEach(el=>el.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
-  const order=['plan','checkin','streak','revenue','wins','overview'];
+  const order=['plan','checkin','streak','revenue','wins','lessons','road','overview'];
   const idx=order.indexOf(v);if(idx>-1)document.querySelectorAll('.ntab')[idx]?.classList.add('active');
   // Update mobile bottom nav active states
   document.querySelectorAll('.mn-btn').forEach(el=>el.classList.remove('active'));
@@ -1105,6 +1205,8 @@ function switchView(v){
   if(v==='streak')buildStreak();
   if(v==='revenue')buildRevenue();
   if(v==='wins')buildWins();
+  if(v==='lessons')buildLessons();
+  if(v==='road')buildRoad();
   if(v==='overview')buildOverview();
 }
 
@@ -1131,7 +1233,134 @@ function renderMonth(){
   document.getElementById('monthContent').innerHTML=buildMonth(m);
 }
 
-function renderAll(){buildSidebar();renderMonth();updateStreak();}
+function renderAll(){buildSidebar();renderMonth();updateStreak();buildGate();}
+
+
+// ─── ROAD ─────────────────────────────────────────────────────────────────────
+const RUNGS=[
+  {id:'r1',t:'First content posted',d:'The before/after reel is live.',m:'Month 1'},
+  {id:'r2',t:'Outreach runs every day',d:'15 messages a day for one full week.',m:'Month 1'},
+  {id:'r3',t:'First retainer signed',d:'A client pays you every month.',m:'Month 1–2'},
+  {id:'r4',t:'ETB 120K month',d:'The Month 1 target.',m:'Month 1'},
+  {id:'r5',t:'Hire rung: a retainer covers a helper',d:'When one retainer pays a junior editor\'s monthly cost, book one paid test edit. You do not wait for the end of Stage 2 to get help.',m:'Month 2–3',hire:true},
+  {id:'r6',t:'First case study published',d:'Problem, process, measurable result.',m:'Month 3'},
+  {id:'r7',t:'ETB 250K month, 2+ retainers',d:'The Month 3 proof point.',m:'Month 3'},
+  {id:'r8',t:'First junior editor on trial',d:'Delegate one real task with a written brief.',m:'Month 4',hire:true},
+  {id:'r9',t:'ETB 300K, the Stage 2 floor',d:'Systems hold without you in every step.',m:'Month 5'}
+];
+function toggleRung(id){S.road[id]=S.road[id]?'':today();save();buildRoad();}
+function buildRoad(){
+  const next=RUNGS.find(r=>!S.road[r.id]);
+  const done=RUNGS.filter(r=>S.road[r.id]).length;
+  document.getElementById('roadNext').innerHTML=next
+    ?`<div class="rn-lbl">NEXT RUNG · ${done} OF ${RUNGS.length} STOOD ON</div><div class="rn-t">${esc(next.t)}</div><div class="rn-d">${esc(next.d)}</div>`
+    :`<div class="rn-lbl">ALL ${RUNGS.length} RUNGS STOOD ON</div><div class="rn-t">Stage 2 floor reached.</div><div class="rn-d">Open the Overview and plan Stage 3.</div>`;
+  let h='';
+  RUNGS.forEach((r,i)=>{
+    const on=!!S.road[r.id];
+    h+=`<div class="rung${on?' on':''}${r.hire?' hire':''}${next&&next.id===r.id?' now':''}" onclick="toggleRung('${r.id}')">
+      <div class="rung-dot"></div>
+      <div class="rung-body">
+        <div class="rung-t">${esc(r.t)}</div>
+        <div class="rung-d">${esc(r.d)}</div>
+        <div class="rung-m">${esc(r.m)}${on?' · STOOD ON '+esc(S.road[r.id]):''}</div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('roadList').innerHTML=h;
+}
+
+// ─── LESSONS ──────────────────────────────────────────────────────────────────
+let lesLever='cash';
+function setLesLever(id){lesLever=id;buildLessonLevers();}
+function buildLessonLevers(){
+  document.getElementById('lesLevers').innerHTML=LEVERS.map(l=>`<button class="les-lv${lesLever===l.id?' on':''}" style="--c:${l.color}" onclick="setLesLever('${l.id}')">${l.name}</button>`).join('');
+}
+function addLesson(){
+  const w=document.getElementById('lesWhat'),l=document.getElementById('lesLesson');
+  const what=w.value.trim(),lesson=l.value.trim();
+  if(!what||!lesson)return;
+  S.lessons.push({what,lesson,lever:lesLever,date:today(),month:S.month});
+  w.value='';l.value='';save();buildLessons();
+}
+function delLesson(i){if(confirm('Remove this lesson?')){S.lessons.splice(i,1);save();buildLessons();}}
+function buildLessons(){
+  buildLessonLevers();
+  if(!S.lessons.length){document.getElementById('lesList').innerHTML='<div class="empty">NO LESSONS YET.<br>THE NEXT HARD DAY GOES HERE.</div>';return;}
+  const names={};LEVERS.forEach(l=>names[l.id]=l);
+  let h='';
+  for(let i=S.lessons.length-1;i>=0;i--){
+    const x=S.lessons[i],lv=names[x.lever]||LEVERS[0];
+    h+=`<div class="les-card" style="--c:${lv.color}">
+      <div class="les-top"><span class="les-tag">${lv.name}</span><span class="wc-meta">${esc(x.date)} · MONTH ${esc(x.month)}</span><button class="wc-del" onclick="delLesson(${i})">✕</button></div>
+      <div class="les-what">${esc(x.what)}</div>
+      <div class="les-arrow">SO →</div>
+      <div class="les-lesson">${esc(x.lesson)}</div>
+    </div>`;
+  }
+  document.getElementById('lesList').innerHTML=h;
+}
+
+// ─── BACKUP ───────────────────────────────────────────────────────────────────
+function exportData(){
+  try{
+    S.lastBackup=today();save();
+    const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='bridge-backup-'+today()+'.json';
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+    buildBackupMeta();
+  }catch(e){alert('Export failed. Try again in another browser.');}
+}
+function importData(inp){
+  const f=inp.files&&inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const d=JSON.parse(r.result);
+      if(!d||typeof d!=='object'||!d.checks)throw new Error('bad');
+      S={...S,...d};save();renderAll();buildOverview();buildBackupMeta();
+      alert('Backup imported.');
+    }catch(e){alert('That file is not a Bridge backup.');}
+    inp.value='';
+  };
+  r.readAsText(f);
+}
+function buildBackupMeta(){
+  const el=document.getElementById('bkMeta');if(!el)return;
+  el.textContent=S.lastBackup?('LAST BACKUP: '+S.lastBackup):'NO BACKUP YET';
+}
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(e){}
+
+
+// ─── STAGE GATE LANE ──────────────────────────────────────────────────────────
+function setGate(k,v){const n=parseFloat(String(v).replace(/[^0-9.]/g,''));S.gate[k]=isNaN(n)?0:n;save();buildGate();}
+function buildGate(){
+  const el=document.getElementById('gateLane');if(!el)return;
+  const g=S.gate;
+  const bar=(v,t)=>Math.max(0,Math.min(100,t>0?Math.round(v/t*100):0));
+  const rows=[
+    {k:'clients',tk:'tc',lbl:'RETAINER CLIENTS',v:g.clients,t:g.tc,fmt:x=>x},
+    {k:'mrr',tk:'tm',lbl:'MONTHLY RECURRING ($)',v:g.mrr,t:g.tm,fmt:x=>'$'+Number(x).toLocaleString()},
+    {k:'months',tk:'tn',lbl:'MONTHS AT TARGET IN A ROW',v:g.months,t:g.tn,fmt:x=>x}
+  ];
+  const open=g.clients>=g.tc&&g.mrr>=g.tm&&g.months>=g.tn;
+  let hire;
+  if(g.hireAt>0&&g.mrr>=g.hireAt)hire=`<div class="gl-hire on">HIRE RUNG UNLOCKED · recurring covers a helper. Book one paid test edit.</div>`;
+  else if(g.hireAt>0)hire=`<div class="gl-hire">HIRE RUNG · unlocks at $${Number(g.hireAt).toLocaleString()} a month recurring. $${Math.max(0,g.hireAt-g.mrr).toLocaleString()} to go.</div>`;
+  else hire=`<div class="gl-hire">HIRE RUNG · set the monthly recurring amount that covers one helper, so hiring is a rung and not the finish line.</div>`;
+  const stale=!S.lastBackup||((new Date(today())-new Date(S.lastBackup))/86400000)>7;
+  el.innerHTML=`<div class="gl">
+    <div class="gl-head"><div class="gl-t">THE $5,000 LANE</div><div class="gl-s">${open?'GATE OPEN':'GATE CLOSED · EVERY STEP BELOW COUNTS TOWARD IT'}</div></div>
+    ${rows.map(r=>`<div class="gl-row">
+      <div class="gl-lbl">${r.lbl}</div>
+      <div class="gl-bar"><div class="gl-fill" style="width:${bar(r.v,r.t)}%"></div></div>
+      <div class="gl-nums"><input class="gl-in" type="text" inputmode="decimal" value="${r.v}" onchange="setGate('${r.k}',this.value)" aria-label="${r.lbl} now"> <span>/</span> <input class="gl-in gl-tgt" type="text" inputmode="decimal" value="${r.t}" onchange="setGate('${r.tk}',this.value)" aria-label="${r.lbl} target"></div>
+    </div>`).join('')}
+    <div class="gl-row"><div class="gl-lbl">HIRE UNLOCK AT ($ / MONTH)</div><div class="gl-nums" style="grid-column:2/4;justify-self:end;"><input class="gl-in gl-tgt" type="text" inputmode="decimal" value="${g.hireAt||''}" placeholder="set" onchange="setGate('hireAt',this.value)" aria-label="Hire unlock amount"></div></div>
+    ${hire}
+    ${stale?`<div class="gl-warn">NO BACKUP IN 7+ DAYS · <button class="gl-link" onclick="exportData();buildGate()">EXPORT NOW</button></div>`:''}
+  </div>`;
+}
 
 // Keyboard shortcuts
 document.addEventListener('keydown',e=>{
